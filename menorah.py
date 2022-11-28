@@ -1,3 +1,8 @@
+# TODO: reformat
+# TODO: add click and parameterize options
+# TODO: spec out how to add and pick patterns
+# TODO: make a streamlit UI
+
 import os
 import sys
 import time
