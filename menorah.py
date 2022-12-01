@@ -13,17 +13,11 @@ start_date = datetime.strptime("2022-12-18", "%Y-%m-%d").date()
 chanukah_dates = [start_date + timedelta(days=i) for i in range(8)]
 
 
-class RainbowColors:
-    current = 0
-    colors = [
-        (255, 0 , 0),
-        (255, 127, 0),
-        (255, 255, 0),
-        (0, 255, 0),
-        (0, 0, 255),
-        (75, 0, 130),
-        (148, 0, 211),
-    ]
+class Colors:
+
+    def __init__(self, colors):
+        self.current = 0
+        self.colors = colors
 
     def get_random(self):
         return choice(self.colors)
@@ -98,22 +92,41 @@ class Menorah:
             self._led_off(4+i)
             self._led_off(4-i)
 
-
+    def color_chase(self, night, color = (255, 255, 255), delay = 0.25):
+        lights = [self.shamash] + self._get_lights(night)
+        for light in lights:
+            self._led_on(light, color)
+            time.sleep(delay)
 
 if __name__ == '__main__':
     print("Lighting the Menorah. Ctrl-C to put it out.")
-    stop_time = time.time() + 60*60*4
+    stop_time = time.time() + 60*60*4.5
     try:
         menorah = Menorah()
-        rainbow_colors = RainbowColors()
+        rainbow_colors = Colors(
+            colors = [
+                (255, 0 , 0),
+                (255, 127, 0),
+                (255, 255, 0),
+                (0, 255, 0),
+                (0, 0, 255),
+                (75, 0, 130),
+                (148, 0, 211),
+            ]        
+        )
+        ukraine_colors = Colors(
+            colors = [(0, 87, 183), (255, 215, 0)]
+        )
+        israel_colors = Colors(
+            colors = [(0, 56, 184), (255, 255, 255)]
+        )
         today = date.today()
         while time.time() < stop_time:
             if today not in chanukah_dates:
                 menorah.fan_out(color = rainbow_colors.get_next())
             else:
                 night = chanukah_dates.index(today) + 1
-                menorah.light(night, color = rainbow_colors.get_next())
-                time.sleep(5)
+                menorah.color_chase(night, color=ukraine_colors.get_next())
     except KeyboardInterrupt:
         menorah.off()
         print("\nPutting out the Menorah.")
