@@ -33,7 +33,7 @@ rainbow = Colors(
 )
 ukraine = Colors(colors=[(0, 87, 183), (255, 215, 0)])
 israel = Colors(colors=[(0, 56, 184), (255, 255, 255)])
-christmas = Colors(colors=[(0, 179, 44), (179, 0, 12)])
+christmas = Colors(colors=[(0, 150, 2), (229, 0, 0)])
 
 def random():
     return choice([rainbow, ukraine, israel])
