@@ -7,6 +7,7 @@ import os
 import sys
 import time
 import colr
+import click
 import palettes
 from random import randint, choice
 from datetime import date, timedelta, datetime
@@ -130,14 +131,23 @@ class Menorah:
             time.sleep(delay)
 
 
-if __name__ == '__main__':
+@click.command()
+@click.option("--date",
+    default=str(date.today()),
+    type=click.DateTime(formats=["%Y-%m-%d"]),
+    help="Date to run as.")
+@click.option("--sleep",
+    default=4.5,
+    type=click.FLOAT,
+    help="How long to run for (in hours).")
+def main(date=None, sleep=None):
     print("Lighting the Menorah. Ctrl-C to put it out.")
-    stop_time = time.time() + 60 * 60 * 4.5
+    stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
 
-        today = date.today()
-        if today in (
+        date = date.date()
+        if date in (
             datetime.strptime("2022-12-24", "%Y-%m-%d").date(),
             datetime.strptime("2022-12-25", "%Y-%m-%d").date()
         ):
@@ -146,15 +156,18 @@ if __name__ == '__main__':
             color_palette = palettes.random()
 
         while time.time() < stop_time:
-            if today not in chanukah_dates:
+            if date not in chanukah_dates:
                 menorah.fan_out(colors=color_palette.get_next(5), fade=.25)
             else:
-                night = chanukah_dates.index(today) + 1
+                night = chanukah_dates.index(date) + 1
                 menorah.color_chase(night, color=color_palette.get_next(), fade=1)
     except KeyboardInterrupt:
         menorah.off()
-        print("\nPutting out the Menorah.")
+        print("\nPutting out the Menorah.\033[?25h")
         try:
             sys.exit(0)
         except SystemExit:
             os._exit(0)
+
+if __name__ == '__main__':
+    main()
