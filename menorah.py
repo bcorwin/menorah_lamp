@@ -1,5 +1,5 @@
+#!/usr/bin/python3
 # TODO: reformat
-# TODO: add click and parameterize options
 # TODO: spec out how to add and pick patterns
 # TODO: make a streamlit UI
 
@@ -42,11 +42,11 @@ class Menorah:
         colors = ['#%02x%02x%02x' % c for c in colors]
         out = []
         for i in range(8, -1, -1):
-            char = "█" if i == self.shamash else "▄"
+            char = "╿" if i == self.shamash else "╻"
             out.append(colr.color(char, fore=colors[i])) 
         out = " ".join(out)
-        out += "\n└─┴─┴─┴─┼─┴─┴─┴─┘"
-        out += "\n  ──────┴──────  "
+        out += "\n╰─┴─┴─┴─┼─┴─┴─┴─╯"
+        out += "\n    ════╧════    "
         return out
 
     def _get_lights(self, night):
