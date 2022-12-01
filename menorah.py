@@ -6,35 +6,12 @@
 import os
 import sys
 import time
+import palettes
 from random import randint, choice
 from datetime import date, timedelta, datetime
 
 start_date = datetime.strptime("2022-12-18", "%Y-%m-%d").date()
 chanukah_dates = [start_date + timedelta(days=i) for i in range(8)]
-
-
-class Colors:
-
-    def __init__(self, colors):
-        self.current = 0
-        self.colors = colors
-
-    def get_random(self):
-        return choice(self.colors)
-
-    def get_next(self, num=1):
-        colors = []
-        for i in range(num):
-            color = self.colors[self.current]
-            self.current = (self.current + 1) % len(self.colors)
-            colors.append(color)
-        if num == 1:
-            colors = colors[0]
-        return colors
-
-
-def random_color():
-    return randint(0, 255), randint(0, 255), randint(0, 255)
 
 
 class Menorah:
@@ -146,25 +123,16 @@ if __name__ == '__main__':
     stop_time = time.time() + 60 * 60 * 4.5
     try:
         menorah = Menorah()
-        rainbow_colors = Colors(
-            colors=[
-                (255, 0, 0),
-                (255, 127, 0),
-                (255, 255, 0),
-                (0, 255, 0),
-                (0, 0, 255),
-                (75, 0, 130),
-                (148, 0, 211),
-            ]
-        )
-        ukraine_colors = Colors(
-            colors=[(0, 87, 183), (255, 215, 0)]
-        )
-        israel_colors = Colors(
-            colors=[(0, 56, 184), (255, 255, 255)]
-        )
-        color_palette = choice([rainbow_colors, ukraine_colors, israel_colors])
+
         today = date.today()
+        if today in (
+            datetime.strptime("2022-12-24", "%Y-%m-%d").date(),
+            datetime.strptime("2022-12-25", "%Y-%m-%d").date()
+        ):
+            color_palette = palettes.christmas
+        else:
+            color_palette = palettes.random()
+
         while time.time() < stop_time:
             if today not in chanukah_dates:
                 menorah.fan_out(colors=color_palette.get_next(5), fade=.25)
