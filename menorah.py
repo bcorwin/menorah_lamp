@@ -6,6 +6,7 @@
 import os
 import sys
 import time
+import colr
 import palettes
 from random import randint, choice
 from datetime import date, timedelta, datetime
@@ -35,6 +36,18 @@ class Menorah:
         self.shamash = 4
         self.print_only = print_only
 
+    def __str__(self):
+        colors = [(x[1], x[0], x[2]) for x in self.pixels]
+        colors = ['#%02x%02x%02x' % c for c in colors]
+        out = []
+        for i in range(8, -1, -1):
+            char = "█" if i == self.shamash else "▄"
+            out.append(colr.color(char, fore=colors[i])) 
+        out = " ".join(out)
+        out += "\n└─┴─┴─┴─┼─┴─┴─┴─┘"
+        out += "\n  ──────┴──────  "
+        return out
+
     def _get_lights(self, night):
         assert night >= 1, "Night must be at least 1"
         assert night <= 8, "Night can't be more than 8"
@@ -53,8 +66,6 @@ class Menorah:
                 color = (color[1], color[0], color[2])
             self.pixels[led] = color
             self.pixels.show()
-        else:
-            print(f"{led} set to {color}")
 
     def _led_off(self, led):
         self._led_on(led, (0, 0, 0))
@@ -88,6 +99,7 @@ class Menorah:
                 self._led_on(lights[i], colors[i])
         else:
             self._fade(lights, colors, fade_time=fade)
+        print(self, end="\033[A\033[A\r\033[?25l")
 
     def _lights_off(self, lights, fade=0):
         self._lights_on(lights, len(lights)*[(0,0,0)], fade=fade)
