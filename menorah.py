@@ -40,11 +40,13 @@ class Menorah:
     def __str__(self):
         colors = [(x[1], x[0], x[2]) for x in self.pixels]
         colors = ['#%02x%02x%02x' % c for c in colors]
-        out = []
-        for i in range(8, -1, -1):
-            char = "╿" if i == self.shamash else "╻"
-            out.append(colr.color(char, fore=colors[i])) 
-        out = " ".join(out)
+
+        row1 = [" " if i != self.shamash else colr.color("╻", fore=colors[i]) for i in range(8, -1, -1)] 
+        row2 = [colr.color("╻", fore=colors[i]) if i != self.shamash else "│" for i in range(8, -1, -1)]
+
+        row1 = " ".join(row1)
+        row2 = " ".join(row2)
+        out = row1 + "\n" + row2
         out += "\n╰─┴─┴─┴─┼─┴─┴─┴─╯"
         out += "\n    ════╧════    "
         return out
@@ -100,7 +102,7 @@ class Menorah:
                 self._led_on(lights[i], colors[i])
         else:
             self._fade(lights, colors, fade_time=fade)
-        print(self, end="\033[A\033[A\r\033[?25l")
+        print(self, end="\033[A\033[A\033[A\r\033[?25l")
 
     def _lights_off(self, lights, fade=0):
         self._lights_on(lights, len(lights)*[(0,0,0)], fade=fade)
