@@ -113,7 +113,7 @@ class Menorah:
         self._lights_on(lights, [color], fade=fade)
 
     # Fun patterns
-    def fan_out(self, colors=(255, 255, 255), delay=0.25, fade=0):
+    def fan_out(self, colors=(255, 255, 255), delay=0.25, fade=0, keep_on=True):
         if not isinstance(colors, list):
             colors = [colors]
 
@@ -122,7 +122,10 @@ class Menorah:
             lights = [4+i, 4-i]
             self._lights_on(lights, [color], fade=fade)
             time.sleep(delay)
-            self._lights_off(lights, fade=fade)
+            if not keep_on:
+                self._lights_off(lights, fade=fade)
+        if keep_on:
+            self.off(fade=fade)
 
     def color_chase(self, night, color=(255, 255, 255), delay=0.25, fade=0):
         lights = self._get_lights(night)
@@ -155,9 +158,11 @@ def main(date=None, sleep=None):
         else:
             color_palette = palettes.random()
 
+        keep_on = choice([True, False])
+
         while time.time() < stop_time:
             if date not in chanukah_dates:
-                menorah.fan_out(colors=color_palette.get_next(5), fade=.25)
+                menorah.fan_out(colors=color_palette.get_next(5), fade=.25, keep_on=keep_on)
             else:
                 night = chanukah_dates.index(date) + 1
                 menorah.color_chase(night, color=color_palette.get_next(), fade=1)
