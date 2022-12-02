@@ -7,6 +7,9 @@ class Colors:
         self.current = 0
         self.colors = colors
 
+    def get_all(self):
+        return self.colors
+
     def get_random(self):
         return choice(self.colors)
 

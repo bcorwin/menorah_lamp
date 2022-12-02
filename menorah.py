@@ -132,6 +132,17 @@ class Menorah:
         for light in lights:
             self._lights_on([light], [color], fade=fade)
             time.sleep(delay)
+    
+    def random(self, night, colors, num=None, fade=0):
+        all_lights = self._get_lights(night)
+        if num is None:
+            num = len(all_lights)
+        assert num <= len(all_lights), "Num must be less than the night + 1"
+        
+        lights = [choice(all_lights) for _ in range(num)]
+        new_colors = [choice(colors) for _ in range(num)] 
+                
+        self._lights_on(lights, new_colors, fade=fade)
 
 
 @click.command()
