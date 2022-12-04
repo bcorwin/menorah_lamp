@@ -8,7 +8,8 @@ import sys
 import time
 import colr
 import click
-import palettes
+import palettes as p
+import holiday_dates as hd
 from random import randint, choice
 from datetime import date, timedelta, datetime
 
@@ -156,29 +157,43 @@ class Menorah:
     default=4.5,
     type=click.FLOAT,
     help="How long to run for (in hours).")
-def main(date=None, sleep=None):
+@click.option("--palette", "-p",
+    default=None,
+    help="Palette name. See palettes.py for options.")
+@click.option("--keep-on/--no-keep-on",
+    default=None,
+    help="Keep on for the fan_out pattern.")
+def main(date=None, sleep=None, palette=None, keep_on=None):
     print("Lighting the Menorah. Ctrl-C to put it out.")
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
 
         date = date.date()
-        if date in (
-            datetime.strptime("2022-12-24", "%Y-%m-%d").date(),
-            datetime.strptime("2022-12-25", "%Y-%m-%d").date()
-        ):
-            color_palette = palettes.christmas
+        night = hd.chanukah_nights.get(date)
+        if palette is not None:
+            if not hasattr(p, palette):
+                raise ValueError("Invalid palette")
+            else:
+                palette = getattr(p, palette)
+                assert isinstance(palette, p.Colors), "Palette is not a palette"
         else:
-            color_palette = palettes.random()
+            if date in hd.christmas_dates:
+                palette = p.christmas
+            elif date in hd.shabbat_dates:
+                palette = p.israel
+            else:
+               palette = p.random()
 
-        keep_on = choice([True, False])
+        if keep_on is None:
+            keep_on = choice([True, False])
 
         while time.time() < stop_time:
-            if date not in chanukah_dates:
-                menorah.fan_out(colors=color_palette.get_next(5), fade=.25, keep_on=keep_on)
+            if night is None:
+                menorah.fan_out(colors=palette.get_next(5), fade=.25, keep_on=keep_on)
             else:
-                night = chanukah_dates.index(date) + 1
-                menorah.color_chase(night, color=color_palette.get_next(), fade=1)
+                menorah.color_chase(night, color=palette.get_next(), fade=1)
+
     except KeyboardInterrupt:
         menorah.off()
         print("\nPutting out the Menorah.\033[?25h")

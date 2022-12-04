@@ -23,6 +23,8 @@ class Colors:
             colors = colors[0]
         return colors
 
+WHITE = (255, 255, 255)
+
 rainbow = Colors(
     colors=[
         (255, 0, 0),
@@ -35,8 +37,16 @@ rainbow = Colors(
     ]
 )
 ukraine = Colors(colors=[(0, 87, 183), (255, 215, 0)])
-israel = Colors(colors=[(0, 56, 184), (255, 255, 255)])
+israel = Colors(colors=[(0, 56, 184), WHITE])
 christmas = Colors(colors=[(0, 150, 2), (229, 0, 0)])
+v_day = Colors(
+    colors=[
+        (255,197,230), 
+        (255, 37, 126),
+        (255,38,68),
+        (214,0,0)
+    ]
+)
 
 def random():
-    return choice([rainbow, ukraine, israel])
+    return choice([rainbow, ukraine, israel, v_day])
