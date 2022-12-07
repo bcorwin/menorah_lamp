@@ -10,7 +10,7 @@ import colr
 import click
 import palettes as p
 import holiday_dates as hd
-from random import randint, choice
+from random import randint, choice, choices
 from datetime import date, timedelta, datetime
 
 start_date = datetime.strptime("2022-12-18", "%Y-%m-%d").date()
@@ -39,7 +39,7 @@ class Menorah:
         self.print_only = print_only
 
     def __str__(self):
-        colors = [(x[1], x[0], x[2]) for x in self.pixels]
+        colors = self._get_colors()
         colors = ['#%02x%02x%02x' % c for c in colors]
 
         row1 = [" " if i != self.shamash else colr.color("╻", fore=colors[i]) for i in range(8, -1, -1)] 
@@ -52,24 +52,14 @@ class Menorah:
         out += "\n    ════╧════    "
         return out
 
-    def _get_colors(self, lights):
-        out = []
-        for i in lights:
-            out.append(self.pixels[i])
+    def _get_colors(self, lights=None):
+        if lights is None:
+            lights = list(range(9))
+        out = [self.pixels[i] for i in lights]
+        if self.pixel_order == "GRB":
+            out = [(x[1], x[0], x[2]) for x in out]
         return out
-
-    def _get_lights(self, night):
-        assert night >= 1, "Night must be at least 1"
-        assert night <= 8, "Night can't be more than 8"
-
-        lights = list(range(9))
-        if self.reverse:
-            lights.reverse()
-        lights.pop(self.shamash)
-        lights = lights[-night:]
-        lights = [self.shamash] + lights
-        return lights
-
+ 
     def _led_on(self, led, color):
         if not self.print_only:
             if self.pixel_order == "GRB":
@@ -81,9 +71,7 @@ class Menorah:
         self._led_on(led, (0, 0, 0))
 
     def _fade(self, lights, colors, fade_time, num_steps=100):
-        start = [self.pixels[i] for i in lights]
-        if self.pixel_order == "GRB":
-            start = [(c[1], c[0], c[2]) for c in start]
+        start = self._get_colors(lights)
         intervals = [[(y[1] - y[0]) / num_steps for y in zip(x[0], x[1])] for x in zip(start, colors)]
         steps = []
         for i in range(num_steps + 1):
@@ -114,11 +102,22 @@ class Menorah:
     def _lights_off(self, lights, fade=0):
         self._lights_on(lights, len(lights)*[(0,0,0)], fade=fade)
 
+    def get_lights(self, night):
+        assert night >= 1, "Night must be at least 1"
+        assert night <= 8, "Night can't be more than 8"
+
+        lights = list(range(9))
+        if self.reverse:
+            lights.reverse()
+        lights.pop(self.shamash)
+        lights = lights[-night:]
+        lights = [self.shamash] + lights
+        return lights
+
     def off(self, fade=0):
         self._lights_off(list(range(9)), fade=fade)
 
-    def light(self, night, color=(255, 255, 255), fade=0):
-        lights = self._get_lights(night)
+    def light(self, lights, color=(255, 255, 255), fade=0):
         self._lights_on(lights, [color], fade=fade)
 
     # Fun patterns
@@ -136,24 +135,23 @@ class Menorah:
         if keep_on:
             self.off(fade=fade)
 
-    def color_chase(self, night, color=(255, 255, 255), delay=0.25, fade=0):
-        lights = self._get_lights(night)
+    def color_chase(self, lights, color=(255, 255, 255), delay=0.25, fade=0):
         for light in lights:
             self._lights_on([light], [color], fade=fade)
             time.sleep(delay)
     
-    def random(self, night, colors, num=None, fade=0):
-        all_lights = self._get_lights(night)
-        if num is None:
-            num = len(all_lights)
-        assert num <= len(all_lights), "Num must be less than the night + 1"
+    def random(self, lights, colors, max_num=None, fade=0):
+        if max_num is None:
+            max_num = len(lights)
+        assert max_num <= len(lights), "max_num must be less than len(lights)"
         
-        lights = [choice(all_lights) for _ in range(num)]
+        num = randint(1, max_num)
+        new_lights = [choice(lights) for _ in range(num)]
         new_colors = [choice(colors) for _ in range(num)] 
                 
-        self._lights_on(lights, new_colors, fade=fade)
+        self._lights_on(new_lights, new_colors, fade=fade)
 
-    def blink(self, lights, delay=0.25, fade=0):
+    def blink(self, lights, delay=0.1, fade=0):
         colors = self._get_colors(lights)
         self._lights_off(lights, fade=fade)
         time.sleep(delay)
@@ -174,14 +172,25 @@ class Menorah:
 @click.option("--keep-on/--no-keep-on",
     default=None,
     help="Keep on for the fan_out pattern.")
-def main(date=None, sleep=None, palette=None, keep_on=None):
+@click.option("--pattern",
+    default=None,
+    help="Pattern to use."
+)
+def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
     print("Lighting the Menorah. Ctrl-C to put it out.")
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
+        patterns = ["fan_out", "blink", "color_chase", "random"]
 
         date = date.date()
         night = hd.chanukah_nights.get(date)
+        if night is not None:
+            lights = menorah.get_lights(night)
+            patterns.remove("fan_out")
+        else:
+            lights = menorah.get_lights(8)
+
         if palette is not None:
             if not hasattr(p, palette):
                 raise ValueError("Invalid palette")
@@ -199,11 +208,24 @@ def main(date=None, sleep=None, palette=None, keep_on=None):
         if keep_on is None:
             keep_on = choice([True, False])
 
+        if pattern is None:
+            pattern = choice(patterns)
+        else:
+            assert pattern in patterns, "Invalid pattern name."
+
         while time.time() < stop_time:
-            if night is None:
+            if pattern == "fan_out":
                 menorah.fan_out(colors=palette.get_next(5), fade=.25, keep_on=keep_on)
-            else:
-                menorah.color_chase(night, color=palette.get_next(), fade=1)
+            elif pattern == "color_chase":
+                menorah.color_chase(lights, color=palette.get_next(), fade=1)
+            elif pattern == "blink":
+                menorah.light(lights, color=palette.get_next(), fade=1)
+                for _ in range(10):
+                    blink_lights = choices(lights, k=randint(0, len(lights)))
+                    menorah.blink(blink_lights, fade=0.1)
+                    time.sleep(0.1)
+            elif pattern == "random":
+                menorah.random(lights, colors=palette.get_all(), fade=1)
 
     except KeyboardInterrupt:
         menorah.off()
