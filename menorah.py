@@ -52,6 +52,12 @@ class Menorah:
         out += "\n    ════╧════    "
         return out
 
+    def _get_colors(self, lights):
+        out = []
+        for i in lights:
+            out.append(self.pixels[i])
+        return out
+
     def _get_lights(self, night):
         assert night >= 1, "Night must be at least 1"
         assert night <= 8, "Night can't be more than 8"
@@ -147,6 +153,11 @@ class Menorah:
                 
         self._lights_on(lights, new_colors, fade=fade)
 
+    def blink(self, lights, delay=0.25, fade=0):
+        colors = self._get_colors(lights)
+        self._lights_off(lights, fade=fade)
+        time.sleep(delay)
+        self._lights_on(lights, colors, fade=fade)
 
 @click.command()
 @click.option("--date",
