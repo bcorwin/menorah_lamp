@@ -8,14 +8,20 @@ import sys
 import time
 import colr
 import click
+import signal
 import palettes as p
 import holiday_dates as hd
 from random import randint, choice, choices
 from datetime import date, timedelta, datetime
 
-start_date = datetime.strptime("2022-12-18", "%Y-%m-%d").date()
-chanukah_dates = [start_date + timedelta(days=i) for i in range(8)]
 
+signals = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP} 
+
+def handle_error(x,y):
+    sys.exit(0)
+
+for sig in signals:
+    signal.signal(sig, handle_error)
 
 class Menorah:
     def __init__(self, print_only=False):
@@ -36,7 +42,15 @@ class Menorah:
 
         self.reverse = True
         self.shamash = 4
+        try:
+            interactive = os.getpgrp() == os.tcgetpgrp(sys.stdout.fileno())
+        except Exception:
+            interactive = False
+        self.interactive = interactive
         self.print_only = print_only
+        
+        if self.interactive:
+            print("Lighting the Menorah. Ctrl-C to put it out.")
 
     def __str__(self):
         colors = self._get_colors()
@@ -97,7 +111,9 @@ class Menorah:
                 self._led_on(lights[i], colors[i])
         else:
             self._fade(lights, colors, fade_time=fade)
-        print(self, end="\033[A\033[A\033[A\r\033[?25l")
+
+        if self.interactive:
+            print(self, end="\033[A\033[A\033[A\r\033[?25l")
 
     def _lights_off(self, lights, fade=0):
         self._lights_on(lights, len(lights)*[(0,0,0)], fade=fade)
@@ -177,7 +193,6 @@ class Menorah:
     help="Pattern to use."
 )
 def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
-    print("Lighting the Menorah. Ctrl-C to put it out.")
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
@@ -228,13 +243,9 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
             elif pattern == "random":
                 menorah.random(lights, colors=palette.get_all(), fade=1)
 
-    except KeyboardInterrupt:
+    finally:
         menorah.off()
         print("\nPutting out the Menorah.\033[?25h")
-        try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
 
 if __name__ == '__main__':
     main()
