@@ -3,8 +3,9 @@ from random import choice
 
 class Colors:
 
-    def __init__(self, colors):
+    def __init__(self, name, colors):
         self.current = 0
+        self.name = name
         self.colors = colors
 
     def get_all(self):
@@ -22,10 +23,15 @@ class Colors:
         if num == 1:
             colors = colors[0]
         return colors
+    
+    def __str__(self):
+        return self.name
+
 
 WHITE = (255, 255, 255)
 
 rainbow = Colors(
+    name="Rainbow",
     colors=[
         (255, 0, 0),
         (255, 127, 0),
@@ -36,10 +42,11 @@ rainbow = Colors(
         (148, 0, 211),
     ]
 )
-ukraine = Colors(colors=[(0, 87, 183), (255, 215, 0)])
-israel = Colors(colors=[(0, 56, 184), WHITE])
-christmas = Colors(colors=[(0, 150, 2), (229, 0, 0)])
+ukraine = Colors(name="Ukraine", colors=[(0, 87, 183), (255, 215, 0)])
+israel = Colors(name="Israel", colors=[(0, 56, 184), WHITE])
+christmas = Colors(name="Christmas", colors=[(0, 150, 2), (229, 0, 0)])
 v_day = Colors(
+    name="V-day",
     colors=[
         (255,197,230), 
         (255, 37, 126),
