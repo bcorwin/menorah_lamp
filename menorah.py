@@ -196,7 +196,7 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
-        patterns = ["fan_out", "color_chase", "blink", "random"]
+        patterns = ["fan_out", "color_chase", "random"]
 
         date = date.date()
         night = hd.chanukah_nights.get(date)
@@ -238,6 +238,7 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
             elif pattern == "color_chase":
                 menorah.color_chase(lights, color=palette.get_next(), fade=1)
             elif pattern == "blink":
+                # TODO: Make this better before using it. It's boring.
                 menorah.light(lights, color=palette.get_next(), fade=1)
                 for _ in range(10):
                     blink_lights = choices(lights,
@@ -245,7 +246,7 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
                     menorah.blink(blink_lights, fade=0.1)
                     time.sleep(0.1)
             elif pattern == "random":
-                # TODO: turn them all on first
+                menorah.light(lights, color=palette.get_next(), fade=1)
                 menorah.random(lights, colors=palette.get_all(), fade=1)
 
     finally:
