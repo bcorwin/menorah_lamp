@@ -203,8 +203,10 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
         if night is not None:
             lights = menorah.get_lights(night)
             patterns.remove("fan_out")
+            print(f"Night: {night}")
         else:
             lights = menorah.get_lights(8)
+            print("Not yet Chanukah, lighting all lights")
 
         if palette is not None:
             if not hasattr(p, palette):
@@ -219,6 +221,7 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
                 palette = p.israel
             else:
                palette = p.random()
+        print(f"Palette: {palette}")
 
         if keep_on is None:
             keep_on = choice([True, False])
@@ -227,6 +230,7 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
             pattern = choice(patterns)
         else:
             assert pattern in patterns, "Invalid pattern name."
+        print(f"Pattern: {pattern}")
 
         while time.time() < stop_time:
             if pattern == "fan_out":
@@ -246,6 +250,7 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
     finally:
         menorah.off()
         print("\nPutting out the Menorah.\033[?25h")
+
 
 if __name__ == '__main__':
     main()
