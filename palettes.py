@@ -54,6 +54,15 @@ v_day = Colors(
         (214,0,0)
     ]
 )
+patriotic = Colors(
+    name = "Patriotic",
+    colors=[
+        (255, 255, 255),
+        (200,  16,  46),
+        (  1,  33, 105),
+    ]
+)
 
 def random():
-    return choice([rainbow, ukraine, israel, v_day])
+    return choice([rainbow, ukraine, israel, v_day, patriotic])
+
