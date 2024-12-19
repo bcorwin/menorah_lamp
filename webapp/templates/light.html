@@ -1,0 +1,34 @@
+<html>
+<form action="/light" method="POST">
+  <div>
+    <label for="run_as_date">Run as date</label>
+    <input type="date" id="run_as_date" name="run_as_date" value="{{today}}">
+  </div>
+  <div>
+    <label for="run_length">Run length</label>
+    <input type="number" id="run_length" name="run_length" min="1" max="24" value="1">
+  </div>
+  <div>
+    <label for="palette">Color palette</label>
+    <select id="palette" name="palette" required>
+      <option value="None">Random palette / auto-select</option>
+      <option value="christmas">Christmas</option>
+      <option value="israel">Israel</option>
+      <option value="rainbow">Rainbow</option>
+      <option value="ukraine">Ukraine</option>
+      <option value="v_day">V-day</option>
+    </select>
+  </div>
+  <div>
+    <label for="pattern">Light pattern</label>
+    <select id="pattern" name="pattern" required>
+      <option value="None">Random pattern</option>
+      <option value="color_chase">Color chase</option>
+      <option value="fan_out">Fan out</option>
+      <option value="random">Randomized lights</option>
+    </select>
+  </div>
+  <button type="submit" name="light">Light</button>
+  <button type="submit" name="extinguish">Extinguish</button>
+</form>
+</html>

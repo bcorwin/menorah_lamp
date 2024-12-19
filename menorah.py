@@ -229,7 +229,7 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
         if pattern is None:
             pattern = choice(patterns)
         else:
-            assert pattern in patterns, "Invalid pattern name."
+            assert pattern in patterns, f"Invalid pattern name: {pattern}"
         print(f"Pattern: {pattern}")
 
         while time.time() < stop_time:
