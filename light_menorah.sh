@@ -1,6 +1,7 @@
 # TODO: run menorah in background so this can exit and I don't need ctrl-c
 # TODO: Fix the way things print to the terminal
 # TODO: Print errors to log?
+# TODO: use extinguish_menorah.sh instead
 
 pid_file=/home/pi/menorah_lamp/app.pid
 
