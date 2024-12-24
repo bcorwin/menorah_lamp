@@ -48,6 +48,7 @@ class Menorah:
             interactive = False
         self.interactive = interactive
         self.print_only = print_only
+        self.cmd_output = []
         
         if self.interactive:
             print("Lighting the Menorah. Ctrl-C to put it out.")
@@ -176,6 +177,8 @@ class Menorah:
     def print(self, message):
       if self.interactive:
         print(message)
+      else:
+        self.cmd_output.extend([message])
 
 @click.command()
 @click.option("--date",
