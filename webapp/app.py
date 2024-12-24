@@ -1,6 +1,6 @@
 from datetime import date
 import subprocess
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -31,12 +31,9 @@ def set_state():
   else:
     cmd = ["sudo", "../extinguish_menorah.sh"]
     message = "Putting out the menorah."
-  #results = run(cmd)
-  output = subprocess.check_output(cmd, text=True, timeout=10)
+  # TODO: capture this output and display it to user
+  subprocess.run(cmd)
 
-  print(output)
-  return redirect(url_for("view"))
+  # TODO: Add a button to return home
+  return "Done."
 
-@app.route("/view", methods=["GET"])
-def view():
-  return "Viewing"
