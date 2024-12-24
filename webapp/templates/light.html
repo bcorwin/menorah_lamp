@@ -3,7 +3,7 @@
   <div>{{ message }}</div>
   <br/><hr><br/>
   {% endif %}
-  <form action="/" method="POST">
+  <form action="/set_state" method="POST">
     <div>
       <label for="run_as_date">Run as date</label>
       <input type="date" id="run_as_date" name="run_as_date" value="{{today}}">
