@@ -1,0 +1,15 @@
+<html>
+  <div>{{ message }}</div>
+  <div>
+    {% if cmd_output %}
+      <ul>
+      {% for item in cmd_output %}
+        <li>{{ item }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+  <form action="/">
+    <input type="submit" value="Re-config menorah" />
+  </form>
+</html>

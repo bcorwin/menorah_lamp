@@ -1,6 +1,8 @@
+from os import path
 from datetime import date
 import subprocess
 from flask import Flask, render_template, request
+from time import sleep, time
 
 app = Flask(__name__)
 
@@ -10,12 +12,14 @@ def config():
     "light.html",
     today=date.today()
  )
+  # TODO: Loading image for user
   return output
 
 @app.route("/set_state", methods=["POST"])
 def set_state():
   d = request.form
-  if d.get("light") == "":
+  lighting = (d.get("light") == "")
+  if lighting:
     cmd = ["sudo", "../light_menorah.sh"]
     cmd.extend(["--date", d["run_as_date"]])
     cmd.extend(["--sleep", d["run_length"]])
@@ -27,13 +31,28 @@ def set_state():
     pattern = d["pattern"]
     if pattern != "None":
       cmd.extend(["--pattern", pattern])  
-    message = "Lighting the menorah."
+    message = "Lighting the menorah:"
   else:
     cmd = ["sudo", "../extinguish_menorah.sh"]
     message = "Putting out the menorah."
-  # TODO: capture this output and display it to user
-  subprocess.run(cmd)
+  process = subprocess.Popen(cmd,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    shell=False)
 
-  # TODO: Add a button to return home
-  return "Done."
+  if lighting:
+    config_path = "config.txt"
+    while (time() - path.getmtime(config_path)) > 1:
+      sleep(0.5)
+    with open(config_path) as f:
+      cmd_output = f.read().strip()
+    cmd_output = cmd_output.split("\n")
+  else:
+    cmd_output = None
 
+  output = render_template(
+    "state.html",
+    message=message,
+    cmd_output=cmd_output,
+  )
+  return output
