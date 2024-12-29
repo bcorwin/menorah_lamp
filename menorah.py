@@ -51,8 +51,11 @@ class Menorah:
 
         self.print_only = print_only
         
-        if self.interactive:
-            print("Lighting the Menorah. Ctrl-C to put it out.")
+        self.config_file = "config.txt"
+        with open(self.config_file, "w") as f:
+          f.write("")
+        
+        self.print("Lighting the Menorah. Ctrl-C to put it out.", log=False)
 
     def __str__(self):
         colors = self._get_colors()
@@ -175,12 +178,17 @@ class Menorah:
         time.sleep(delay)
         self._lights_on(lights, colors, fade=fade)
 
-    def print(self, message):
+    def print(self, message, log=True):
+      if log:
+        with open(self.config_file, "a") as f:
+          f.write(message + "\n")
+        
       if self.interactive:
         print(message)
 
 @click.command()
 @click.option("--date",
+    "date_to_run",
     default=str(date.today()),
     type=click.DateTime(formats=["%Y-%m-%d"]),
     help="Date to run as.")
@@ -198,21 +206,22 @@ class Menorah:
     default=None,
     help="Pattern to use."
 )
-def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
+def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None):
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
         patterns = ["fan_out", "color_chase", "random"]
 
-        date = date.date()
-        night = hd.chanukah_nights.get(date)
+        date_to_run = date_to_run.date()
+        menorah.print(f"Date: {date_to_run}")
+        night = hd.chanukah_nights.get(date_to_run)
         if night is not None:
             lights = menorah.get_lights(night)
             patterns.remove("fan_out")
             menorah.print(f"Night: {night}")
         else:
             lights = menorah.get_lights(8)
-            menorah.print("Not yet Chanukah, lighting all lights")
+            menorah.print("Night: Not yet Chanukah, using all lights", log=False)
 
         if palette is not None:
             if not hasattr(p, palette):
@@ -221,9 +230,9 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
                 palette = getattr(p, palette)
                 assert isinstance(palette, p.Colors), "Palette is not a palette"
         else:
-            if date in hd.christmas_dates:
+            if date_to_run in hd.christmas_dates:
                 palette = p.christmas
-            elif date in hd.shabbat_dates:
+            elif date_to_run in hd.shabbat_dates:
                 palette = p.israel
             else:
                palette = p.random()
@@ -254,10 +263,11 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
             elif pattern == "random":
                 menorah.light(lights, color=palette.get_next(), fade=1)
                 menorah.random(lights, colors=palette.get_all(), fade=1)
+            # TODO: Add Magni-phi effect and/or Beta movement pattern
 
     finally:
         menorah.off()
-        menorah.print("\n\nPutting out the Menorah.\033[?25h")
+        menorah.print("\n\nPutting out the Menorah.\033[?25h", log=False)
 
 
 if __name__ == '__main__':
