@@ -25,6 +25,10 @@ for sig in signals:
 
 class Menorah:
     def __init__(self, print_only=False):
+        self.config_file = "config.txt"
+        with open(self.config_file, "w") as f:
+          f.write("")
+
         if not print_only:
             import board
             import neopixel
@@ -50,10 +54,6 @@ class Menorah:
         self.interactive = interactive
 
         self.print_only = print_only
-        
-        self.config_file = "config.txt"
-        with open(self.config_file, "w") as f:
-          f.write("")
         
         self.print("Lighting the Menorah. Ctrl-C to put it out.", log=False)
 
