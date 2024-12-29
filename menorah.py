@@ -103,8 +103,11 @@ class Menorah:
                 self._led_on(lights[i], step[i])
 
     def _lights_on(self, lights, colors, fade=0):
-        assert isinstance(lights, list), "Lights must be a list"
-        assert isinstance(colors, list), "Colors must be a list"
+        if not isinstance(lights, list):
+            lights = [lights]
+        if not isinstance(colors, list):
+            colors = [colors]
+
         if len(colors) == 1:
             colors = len(lights)*colors
         assert len(colors) == len(lights), \
@@ -119,6 +122,8 @@ class Menorah:
         self.print(self, end="\033[A\033[A\033[A\r\033[?25l", log=False)
 
     def _lights_off(self, lights, fade=0):
+        if not isinstance(lights, list):
+            lights = [lights]
         self._lights_on(lights, len(lights)*[(0,0,0)], fade=fade)
 
     def get_lights(self, night):
@@ -159,29 +164,22 @@ class Menorah:
             self._lights_on([light], [color], fade=fade)
             time.sleep(delay)
 
-    def beta_movement(self, lights, color=(255, 255, 255), delay=0.25, fade=0):
+    def snake(self, lights, color=(255, 255, 255), delay=0.25, fade=0):
         # TODO: Make this work for any legal value of "chain length"
-        # TODO: Combine this with color chase? with appropriate delay / vade values
+        # TOOD: Add flag to loop around instead of stopping at end then restarting
+        # TODO: Combine this with color chase? with appropriate delay / fade values
         num_lights = len(lights)
-        for i in range(0, num_lights):
+        for i in range(0, num_lights+1):
             if i == 0:
-              self._lights_on(lights[0:1], [color], fade=fade)
+              self._lights_on(lights[0], color, fade=fade)
               time.sleep(delay)
-              self._lights_on(lights[1:2], [color], fade=fade)
-              time.sleep(delay)
-              self._lights_on(lights[2:3], [color], fade=fade)
-            elif i > num_lights - 3:
-              self._lights_off(lights[i-2:i-1], fade=fade)
-              self._lights_on(lights[i:i+2], [color], fade=fade)
-              time.sleep(delay)
-
-              self._lights_off(lights[i-1:i], fade=fade)
-              self._lights_on(lights[i+1:i+3], [color], fade=fade)
-
-              self._lights_off(lights[i:i+1], fade=fade)
-            else:
-              self._lights_off(lights[i-2:i-1], fade=fade)
-              self._lights_on(lights[i:i + 2], [color], fade=fade)
+            
+            self._lights_off(lights[i-1], fade=fade)
+            
+            if i <= num_lights - 2:
+              self._lights_on(lights[i+1], color, fade=fade)
+            
+            if i < num_lights:
               time.sleep(delay)
     
     def random(self, lights, colors, max_num=None, fade=0):
@@ -233,7 +231,7 @@ def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None)
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
-        patterns = ["fan_out", "color_chase", "random", "beta_movement"]
+        patterns = ["fan_out", "color_chase", "random", "snake"]
 
         date_to_run = date_to_run.date()
         menorah.print(f"Date: {date_to_run}")
@@ -286,10 +284,9 @@ def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None)
             elif pattern == "random":
                 menorah.light(lights, color=palette.get_next(), fade=1)
                 menorah.random(lights, colors=palette.get_all(), fade=1)
-            elif pattern == "beta_movement":
-                menorah.beta_movement(lights, color=palette.get_next())
-            # TODO: Add Magni-phi effect (or is this just color chase?
-            # TODO: Beta movement pattern
+            elif pattern == "snake":
+                menorah.snake(lights, color=palette.get_next())
+            # TODO: Add Magni-phi effect (or is this just color chase?)
 
     finally:
         menorah.off()
