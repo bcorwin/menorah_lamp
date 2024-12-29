@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # TODO: reformat
 # TODO: spec out how to add and pick patterns
-# TODO: make a streamlit UI
 
 import os
 import sys
@@ -117,8 +116,7 @@ class Menorah:
         else:
             self._fade(lights, colors, fade_time=fade)
 
-        if self.interactive:
-            print(self, end="\033[A\033[A\033[A\r\033[?25l")
+        self.print(self, end="\033[A\033[A\033[A\r\033[?25l", log=False)
 
     def _lights_off(self, lights, fade=0):
         self._lights_on(lights, len(lights)*[(0,0,0)], fade=fade)
@@ -178,13 +176,13 @@ class Menorah:
         time.sleep(delay)
         self._lights_on(lights, colors, fade=fade)
 
-    def print(self, message, log=True):
+    def print(self, message, log=True, **kwargs):
       if log:
         with open(self.config_file, "a") as f:
-          f.write(message + "\n")
+          f.write(str(message) + "\n")
         
       if self.interactive:
-        print(message)
+        print(message, **kwargs)
 
 @click.command()
 @click.option("--date",
