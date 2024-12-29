@@ -164,22 +164,42 @@ class Menorah:
             self._lights_on([light], [color], fade=fade)
             time.sleep(delay)
 
-    def snake(self, lights, color=(255, 255, 255), delay=0.25, fade=0):
-        # TODO: Make this work for any legal value of "chain length"
+    def snake(self, lights, color=(255, 255, 255), delay=0.25, fade=0, snake_size=3):
+        # TODO: Could this replace color chase?
         # TOOD: Add flag to loop around instead of stopping at end then restarting
-        # TODO: Combine this with color chase? with appropriate delay / fade values
         num_lights = len(lights)
-        for i in range(0, num_lights+1):
-            if i == 0:
-              self._lights_on(lights[0], color, fade=fade)
-              time.sleep(delay)
+        if snake_size >= num_lights:
+            raise ValueError("snake_size must be less than num_lights")
+
+        for snake_tail in range(num_lights):
+            # Index of the head of the snake
+            snake_head = snake_tail + snake_size - 1
+
+            # Build the snake to start
+            if snake_tail == 0:
+              self._lights_on(lights[snake_tail], color, fade=fade)
+              for j in range(1, snake_size + 1):
+                # print(f"{snake_tail}-P3")
+                time.sleep(delay)
+                self._lights_on(lights[j], color, fade=fade)
+
+            # Remove the tail
+            self._lights_off(lights[snake_tail], fade=fade)
+
+            # Move the head forward
+            if snake_head < num_lights - 1:             
+              self._lights_on(lights[snake_head + 1], color, fade=fade)
+            elif snake_head == (num_lights - 1):
+              # Remove remaining snake at end
+              for j in range(snake_tail + 1, snake_head + 1):
+                  # print(f"{snake_tail}-P2-{j}")
+                  time.sleep(delay)
+                  self._lights_off(lights[j], fade=fade)
+                  
             
-            self._lights_off(lights[i-1], fade=fade)
-            
-            if i <= num_lights - 2:
-              self._lights_on(lights[i+1], color, fade=fade)
-            
-            if i < num_lights:
+            if snake_head < (num_lights - 1):
+              # Wait a beat before moving on
+              # print(f"{snake_tail}-P1")
               time.sleep(delay)
     
     def random(self, lights, colors, max_num=None, fade=0):
