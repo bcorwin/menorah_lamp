@@ -11,8 +11,7 @@ def config():
   output = render_template(
     "light.html",
     today=date.today()
- )
-  # TODO: Loading image for user
+  )
   return output
 
 @app.route("/set_state", methods=["POST"])
@@ -31,10 +30,10 @@ def set_state():
     pattern = d["pattern"]
     if pattern != "None":
       cmd.extend(["--pattern", pattern])  
-    message = "Lighting the menorah:"
+    message = "Menorah lit:"
   else:
     cmd = ["sudo", "../extinguish_menorah.sh"]
-    message = "Putting out the menorah."
+    message = "Menorah extinguished."
   process = subprocess.Popen(cmd,
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
