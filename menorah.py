@@ -42,13 +42,14 @@ class Menorah:
 
         self.reverse = True
         self.shamash = 4
+        
         try:
             interactive = os.getpgrp() == os.tcgetpgrp(sys.stdout.fileno())
         except Exception:
             interactive = False
         self.interactive = interactive
+
         self.print_only = print_only
-        self.cmd_output = []
         
         if self.interactive:
             print("Lighting the Menorah. Ctrl-C to put it out.")
@@ -177,8 +178,6 @@ class Menorah:
     def print(self, message):
       if self.interactive:
         print(message)
-      else:
-        self.cmd_output.extend([message])
 
 @click.command()
 @click.option("--date",
@@ -258,7 +257,7 @@ def main(date=None, sleep=None, palette=None, keep_on=None, pattern=None):
 
     finally:
         menorah.off()
-        menorah.print("\nPutting out the Menorah.\033[?25h")
+        menorah.print("\n\nPutting out the Menorah.\033[?25h")
 
 
 if __name__ == '__main__':

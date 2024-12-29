@@ -1,3 +1,6 @@
+# DO NOT USE THIS IF YOU WANT TO RUN IT INTERACTIVELY.
+# TO RUN INTERACTIVELY RUN ./menorah.py
+
 # TODO: run menorah in background so this can exit and I don't need ctrl-c
 # TODO: Fix the way things print to the terminal
 # TODO: Print errors to log?
@@ -14,4 +17,3 @@ python3 /home/pi/menorah_lamp/menorah.py $@ &
 pid=$!
 echo $pid > $pid_file
 # disown $pid
-
