@@ -158,6 +158,31 @@ class Menorah:
         for light in lights:
             self._lights_on([light], [color], fade=fade)
             time.sleep(delay)
+
+    def beta_movement(self, lights, color=(255, 255, 255), delay=0.25, fade=0):
+        # TODO: Make this work for any legal value of "chain length"
+        # TODO: Combine this with color chase? with appropriate delay / vade values
+        num_lights = len(lights)
+        for i in range(0, num_lights):
+            if i == 0:
+              self._lights_on(lights[0:1], [color], fade=fade)
+              time.sleep(delay)
+              self._lights_on(lights[1:2], [color], fade=fade)
+              time.sleep(delay)
+              self._lights_on(lights[2:3], [color], fade=fade)
+            elif i > num_lights - 3:
+              self._lights_off(lights[i-2:i-1], fade=fade)
+              self._lights_on(lights[i:i+2], [color], fade=fade)
+              time.sleep(delay)
+
+              self._lights_off(lights[i-1:i], fade=fade)
+              self._lights_on(lights[i+1:i+3], [color], fade=fade)
+
+              self._lights_off(lights[i:i+1], fade=fade)
+            else:
+              self._lights_off(lights[i-2:i-1], fade=fade)
+              self._lights_on(lights[i:i + 2], [color], fade=fade)
+              time.sleep(delay)
     
     def random(self, lights, colors, max_num=None, fade=0):
         if max_num is None:
@@ -208,7 +233,7 @@ def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None)
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
-        patterns = ["fan_out", "color_chase", "random"]
+        patterns = ["fan_out", "color_chase", "random", "beta_movement"]
 
         date_to_run = date_to_run.date()
         menorah.print(f"Date: {date_to_run}")
@@ -261,7 +286,10 @@ def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None)
             elif pattern == "random":
                 menorah.light(lights, color=palette.get_next(), fade=1)
                 menorah.random(lights, colors=palette.get_all(), fade=1)
-            # TODO: Add Magni-phi effect and/or Beta movement pattern
+            elif pattern == "beta_movement":
+                menorah.beta_movement(lights, color=palette.get_next())
+            # TODO: Add Magni-phi effect (or is this just color chase?
+            # TODO: Beta movement pattern
 
     finally:
         menorah.off()
