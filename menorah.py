@@ -164,9 +164,10 @@ class Menorah:
             self._lights_on([light], [color], fade=fade)
             time.sleep(delay)
 
-    def snake(self, lights, color=(255, 255, 255), delay=0.25, fade=0, snake_size=3):
+    def snake(self, lights, color=(255, 255, 255), delay=0.25, fade=0.01, snake_size=3):
         # TODO: Could this replace color chase?
         # TOOD: Add flag to loop around instead of stopping at end then restarting
+        off_color = (0, 0, 0)
         num_lights = len(lights)
         if snake_size >= num_lights:
             raise ValueError("snake_size must be less than num_lights")
@@ -178,29 +179,26 @@ class Menorah:
             # Build the snake to start
             if snake_tail == 0:
               self._lights_on(lights[snake_tail], color, fade=fade)
-              for j in range(1, snake_size + 1):
+              time.sleep(delay)
+              for j in range(1, snake_size):
                 # print(f"{snake_tail}-P3")
-                time.sleep(delay)
                 self._lights_on(lights[j], color, fade=fade)
+                time.sleep(delay)
 
-            # Remove the tail
-            self._lights_off(lights[snake_tail], fade=fade)
-
-            # Move the head forward
+            # Remove the tail and move the head forward
             if snake_head < num_lights - 1:             
-              self._lights_on(lights[snake_head + 1], color, fade=fade)
+              self._lights_on(
+                  [lights[snake_tail], lights[snake_head + 1]],
+                  [off_color, color],
+                  fade = fade
+              )
+              time.sleep(delay)
             elif snake_head == (num_lights - 1):
               # Remove remaining snake at end
-              for j in range(snake_tail + 1, snake_head + 1):
+              for j in range(snake_tail, snake_head + 1):
                   # print(f"{snake_tail}-P2-{j}")
-                  time.sleep(delay)
                   self._lights_off(lights[j], fade=fade)
-                  
-            
-            if snake_head < (num_lights - 1):
-              # Wait a beat before moving on
-              # print(f"{snake_tail}-P1")
-              time.sleep(delay)
+                  time.sleep(delay)  # Don't do this for the last one?
     
     def random(self, lights, colors, max_num=None, fade=0):
         if max_num is None:
@@ -251,7 +249,7 @@ def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None)
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
-        patterns = ["fan_out", "color_chase", "random", "snake"]
+        patterns = ["fan_out", "color_chase", "random", "snake", "growing_snake"]
 
         date_to_run = date_to_run.date()
         menorah.print(f"Date: {date_to_run}")
@@ -305,7 +303,12 @@ def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None)
                 menorah.light(lights, color=palette.get_next(), fade=1)
                 menorah.random(lights, colors=palette.get_all(), fade=1)
             elif pattern == "snake":
-                menorah.snake(lights, color=palette.get_next())
+                num_lights = len(lights)
+                snake_size = 3 if num_lights > 3 else num_lights - 1
+                menorah.snake(lights, color=palette.get_next(), snake_size = snake_size)
+            elif pattern == "growing_snake":
+                for snake_size in range(1, len(lights)):
+                    menorah.snake(lights, color=palette.get_next(), snake_size=snake_size)
             # TODO: Add Magni-phi effect (or is this just color chase?)
 
     finally:
