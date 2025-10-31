@@ -1,0 +1,10 @@
+# menorah.service
+
+[Unit]
+Description=  menorah lamp
+
+[Service]
+Type= simple
+User= root
+ExecStart= /home/pi/menorah_lamp/light_menorah.sh
+ExecStop= /home/pi/menorah_lamp/extinguish_menorah.sh

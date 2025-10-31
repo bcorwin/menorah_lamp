@@ -1,0 +1,12 @@
+[Unit]
+Description=Webapp to control Menorah Lamp
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/menorah_lamp/webapp
+ExecStart=/usr/bin/python3 /home/pi/menorah_lamp/webapp/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
