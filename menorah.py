@@ -291,6 +291,8 @@ def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None)
                 menorah.fan_out(colors=palette.get_next(5), fade=.25, keep_on=keep_on)
             elif pattern == "color_chase":
                 menorah.color_chase(lights, color=palette.get_next(), fade=1)
+            elif pattern == "phi":
+                menorah.phi(lights, color=palette.get_next())
             elif pattern == "blink":
                 # TODO: Make this better before using it. It's boring.
                 menorah.light(lights, color=palette.get_next(), fade=1)
