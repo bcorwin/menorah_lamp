@@ -63,6 +63,32 @@ patriotic = Colors(
     ]
 )
 
+rgb = Colors(
+    name = "RGB",
+    colors = [
+        (255, 0, 0),
+        (0, 255, 0),
+        (0, 0, 255),
+    ]
+)
+
+starry_night = Colors(
+    name = "Starry Night Serenade",
+    colors = [
+        (13, 69, 100),
+        (100, 84, 0),
+        (100, 13, 55),
+    ]
+)
+
 def random():
-    return choice([rainbow, ukraine, israel, v_day, patriotic])
+    return choice([
+        rainbow,
+        ukraine,
+        israel,
+        v_day,
+        patriotic,
+        rgb,
+        starry_night,
+])
 
