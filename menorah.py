@@ -196,13 +196,8 @@ class Menorah:
     type=click.Choice(pattern_names, case_sensitive=False),
     help="Pattern to use."
 )
-@click.option(
-    "--keep-on/--no-keep-on",
-    default=None,
-    help="Keep on for the fan_out pattern."
-)
-def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None):
-    # TODO: Accept any possible keyword args like fade, delay, etc.
+def main(date_to_run=None, sleep=None, palette=None, pattern=None):
+    # TODO: Accept any possible keyword args like keep_on, fade, delay, etc.
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
@@ -227,23 +222,18 @@ def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None)
             elif date_to_run in hd.shabbat_dates:
                 palette = palettes.israel
             else:
-               palette = choice(palette_names)
+               palette = getattr(palettes, choice(palette_names))
         menorah.print(f"Palette: {palette}")
 
         if pattern is None:
             pattern = choice(pattern_names)
         menorah.print(f"Pattern: {pattern}")
 
-        if keep_on is None:
-            keep_on = choice([True, False])
-
         while time.time() < stop_time:
             menorah.run_pattern(
                 pattern=pattern.lower(),
                 lights=lights,
-                palette=palette,
-                keep_on=keep_on,
-                snake_size = 3 if len(lights) > 3 else len(lights) - 1,
+                palette=palette
             )
 
     finally:
