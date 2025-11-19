@@ -42,7 +42,7 @@ def set_state():
   if lighting:
     cmd = ["sudo", "../light_menorah.sh"]
     cmd.extend(["--date", d["run_as_date"]])
-    cmd.extend(["--sleep", d["run_length"]])
+    cmd.extend(["--sleep", str(int(d["run_length"]) / 60)])
 
     palette = d["palette"]
     if palette != "None":
