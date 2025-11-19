@@ -1,5 +1,7 @@
 from random import choice
 
+WHITE = (255, 255, 255)
+
 
 class Colors:
 
@@ -27,9 +29,6 @@ class Colors:
     def __str__(self):
         return self.name
 
-
-WHITE = (255, 255, 255)
-
 rainbow = Colors(
     name="Rainbow",
     colors=[
@@ -42,9 +41,13 @@ rainbow = Colors(
         (148, 0, 211),
     ]
 )
+
 ukraine = Colors(name="Ukraine", colors=[(0, 87, 183), (255, 215, 0)])
+
 israel = Colors(name="Israel", colors=[(0, 56, 184), WHITE])
+
 christmas = Colors(name="Christmas", colors=[(0, 150, 2), (229, 0, 0)])
+
 v_day = Colors(
     name="V-day",
     colors=[
@@ -54,6 +57,7 @@ v_day = Colors(
         (214,0,0)
     ]
 )
+
 patriotic = Colors(
     name = "Patriotic",
     colors=[
@@ -80,15 +84,3 @@ starry_night = Colors(
         (100, 13, 55),
     ]
 )
-
-def random():
-    return choice([
-        rainbow,
-        ukraine,
-        israel,
-        v_day,
-        patriotic,
-        rgb,
-        starry_night,
-])
-

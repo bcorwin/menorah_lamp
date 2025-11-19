@@ -1,19 +1,29 @@
 #!/usr/bin/python3
 # TODO: reformat
-# TODO: spec out how to add and pick patterns
-
 import os
 import sys
 import time
 import colr
 import click
 import signal
-import palettes as p
-import patterns
-import holiday_dates as hd
+import inspect
 from random import choice
 from datetime import date, timedelta, datetime
 
+import palettes
+import patterns
+import holiday_dates as hd
+
+pattern_names = [
+    name
+    for name, obj in inspect.getmembers(patterns)
+    if callable(obj)
+]
+palette_names = [
+    name
+    for name, obj in inspect.getmembers(palettes)
+    if isinstance(obj, palettes.Colors)
+]
 
 signals = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP} 
 
@@ -176,24 +186,26 @@ class Menorah:
     "-c",
     "palette",
     default=None,
-    help="Palette name / color-set. See palettes.py for options."
+    type=click.Choice(palette_names, case_sensitive=False),
+    help="Palette name / color-set to use."
+)
+@click.option(
+    "--pattern",
+    "-p",
+    default=None,
+    type=click.Choice(pattern_names, case_sensitive=False),
+    help="Pattern to use."
 )
 @click.option(
     "--keep-on/--no-keep-on",
     default=None,
     help="Keep on for the fan_out pattern."
 )
-@click.option(
-    "--pattern",
-    default=None,
-    help="Pattern to use."
-)
 def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None):
     # TODO: Accept any possible keyword args like fade, delay, etc.
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
-        pattern_names = [f for f in dir(patterns) if "__" not in f]
 
         date_to_run = date_to_run.date()
         menorah.print(f"Date: {date_to_run}")
@@ -208,33 +220,26 @@ def main(date_to_run=None, sleep=None, palette=None, keep_on=None, pattern=None)
             menorah.print("Night: Not yet Chanukah, using all lights", log=False)
 
         if palette is not None:
-            if not hasattr(p, palette):
-                raise ValueError("Invalid palette")
-            else:
-                palette = getattr(p, palette)
-                assert isinstance(palette, p.Colors), f"{palette} is not a palette"
+            palette = getattr(palettes, palette.lower())
         else:
             if date_to_run in hd.christmas_dates:
-                palette = p.christmas
+                palette = palettes.christmas
             elif date_to_run in hd.shabbat_dates:
-                palette = p.israel
+                palette = palettes.israel
             else:
-               palette = p.random()
+               palette = choice(palette_names)
         menorah.print(f"Palette: {palette}")
-
-        # TODO: Move things like this to their patterns function (above too?)
-        if keep_on is None:
-            keep_on = choice([True, False])
 
         if pattern is None:
             pattern = choice(pattern_names)
-        else:
-            assert pattern in pattern_names, f"Invalid pattern name: {pattern}"
         menorah.print(f"Pattern: {pattern}")
+
+        if keep_on is None:
+            keep_on = choice([True, False])
 
         while time.time() < stop_time:
             menorah.run_pattern(
-                pattern=pattern,
+                pattern=pattern.lower(),
                 lights=lights,
                 palette=palette,
                 keep_on=keep_on,

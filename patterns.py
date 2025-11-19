@@ -1,5 +1,6 @@
+# TODO: Make this classes? or something more uniform
 import time
-from random import randint, choice
+import random
 
 
 def fan_out(lamp, lights, palette, **kwargs):
@@ -34,9 +35,9 @@ def random(lamp, lights, palette, **kwargs):
         raise ValueError("max_num must be less than len(lights)")
 
     # Now change them randomly
-    num = randint(1, max_num)
-    new_lights = [choice(lights) for _ in range(num)]
-    new_colors = [choice(colors) for _ in range(num)] 
+    num = random.randint(1, max_num)
+    new_lights = [random.choice(lights) for _ in range(num)]
+    new_colors = [random.choice(colors) for _ in range(num)] 
 
     lamp._lights_on(new_lights, new_colors, fade=fade)
 
