@@ -65,7 +65,7 @@ def set_state():
   )
 
   if lighting:
-    config_path = "../config.txt"
+    config_path = "config.txt"
     while (time() - path.getmtime(config_path)) > 1:
       sleep(0.5)
     with open(config_path) as f:
