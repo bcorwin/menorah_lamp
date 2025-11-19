@@ -196,8 +196,14 @@ class Menorah:
     type=click.Choice(pattern_names, case_sensitive=False),
     help="Pattern to use."
 )
-def main(date_to_run=None, sleep=None, palette=None, pattern=None):
-    # TODO: Accept any possible keyword args like keep_on, fade, delay, etc.
+@click.option(
+    "--data",
+    "-d",
+    help="Additional data (parameters) to pass to the chosen pattern.",
+    type=(str, str),
+    multiple=True
+)
+def main(date_to_run=None, sleep=None, palette=None, pattern=None, data=None):
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
@@ -229,11 +235,15 @@ def main(date_to_run=None, sleep=None, palette=None, pattern=None):
             pattern = choice(pattern_names)
         menorah.print(f"Pattern: {pattern}")
 
+        params = dict(data)
+        menorah.print(f"Params: {params}")
+
         while time.time() < stop_time:
             menorah.run_pattern(
                 pattern=pattern.lower(),
                 lights=lights,
-                palette=palette
+                palette=palette,
+                **params
             )
 
     finally:

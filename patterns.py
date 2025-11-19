@@ -1,20 +1,18 @@
 # TODO: Make these classes? or something more uniform
 # Pattern class that sets everything it needs on init,
 # then a run method that runs in every while loop?
+# Doing this would allow things it do do things on init
+# like randomly selecting or printing params)
 import time
 import random
 
 
 def fan_out(lamp, lights, palette, **kwargs):
-    delay = kwargs.get("delay", 0.25)
-    fade = kwargs.get("fade", 0.25)
-    keep_on = kwargs.get("keep_on")
+    delay = float(kwargs.get("delay", 0.25))
+    fade = float(kwargs.get("fade", 0.25))
+    keep_on = kwargs.get("keep_on", "true").lower()[0] == "t"
 
     colors = palette.get_next(5)
-    if not keep_on:
-        keep_on = random.choice([True, False])
-    if not isinstance(colors, list):
-        colors = [colors]
 
     for i in range(5):
         color = colors[i % len(colors)]
@@ -26,13 +24,16 @@ def fan_out(lamp, lights, palette, **kwargs):
     if keep_on:
         lamp.off(fade=fade)
 
-def random_lights(lamp, lights, palette, **kwargs):
-    max_num = kwargs.get("max_num", len(lights))
-    fade = kwargs.get("fade", 1)
+def cycle(lamp, lights, palette, **kwargs):
+    max_num = int(kwargs.get("max_num", len(lights)))
+    fade = float(kwargs.get("fade", 1))
+    delay = float(kwargs.get("delay", 1))
+    random_next = kwargs.get("random_next", "false").lower()[0] == "t"
+    reset = kwargs.get("reset", "true").lower()[0] == "t"
 
-    # Turn on all the lights to start
-    lamp.light(lights, color=palette.get_next(), fade=fade)
-    colors = palette.get_all()
+    if reset:
+        lamp.light(lights, color=palette.get_next(), fade=fade)
+        time.sleep(delay)
 
     if max_num > len(lights):
         raise ValueError("max_num must be less than len(lights)")
@@ -40,13 +41,17 @@ def random_lights(lamp, lights, palette, **kwargs):
     # Now change them randomly
     num = random.randint(1, max_num)
     new_lights = [random.choice(lights) for _ in range(num)]
-    new_colors = [random.choice(colors) for _ in range(num)] 
+    if random_next:
+        new_colors = [random.choice(palette.get_all()) for _ in range(num)]
+    else:
+        new_colors = palette.get_next()
 
     lamp._lights_on(new_lights, new_colors, fade=fade)
+    time.sleep(delay)
 
 def color_chase(lamp, lights, palette, **kwargs):
-    delay = kwargs.get("delay", 0.25)
-    fade = kwargs.get("fade", 1)
+    delay = float(kwargs.get("delay", 0.25))
+    fade = float(kwargs.get("fade", 1))
 
     color = palette.get_next()
 
@@ -58,10 +63,10 @@ def snake(lamp, lights, palette, **kwargs):
     # TODO: Could this replace color chase?
     # TODO: Add flag to loop around instead of stopping at end then restarting
     # TODO: Always keep the shamash on?
-    delay = kwargs.get("delay", 0.25)
-    fade = kwargs.get("fade", 0.01)
-    growing = kwargs.get("growing")
-    snake_size = kwargs.get("snake_size")
+    delay = float(kwargs.get("delay", 0.25))
+    fade = float(kwargs.get("fade", 0.01))
+    growing = kwargs.get("growing", 'false').lower()[0] == 't'
+    snake_size = int(kwargs.get("snake_size", 0))
 
     def snake_loop(color, snake_size):
         off_color = (0, 0, 0)
