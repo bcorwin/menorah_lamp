@@ -3,6 +3,7 @@
 # then a run method that runs in every while loop?
 # Doing this would allow things it do do things on init
 # like randomly selecting or printing params)
+# TODO: Some sort of alternating blinking (odds one color, evens another, then another color)
 import time
 import random
 

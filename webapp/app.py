@@ -52,11 +52,20 @@ def set_state():
     if pattern != "None":
       cmd.extend(["--pattern", pattern])
 
+    params = d["params"]
+    if params != "":
+      for param in params.splitlines(keepends=False):
+        if ' ' not in param:
+          continue
+        key, value = param.split(' ')
+        cmd.extend(["--data", key, value])
+
     message = "Menorah lit:"
   else:
     cmd = ["sudo", "../extinguish_menorah.sh"]
     message = "Menorah extinguished."
 
+  print(cmd)
   process = subprocess.Popen(
     cmd,
     stdout=subprocess.PIPE,
