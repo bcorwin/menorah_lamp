@@ -16,7 +16,7 @@ if [ -f "$pid_file" ]; then
 fi
 
 echo "`date` Lighting the menorah"
-python3 /home/pi/menorah_lamp/menorah.py $@ &
+python3 /home/pi/menorah_lamp/light.py $@ &
 pid=$!
 echo $pid > $pid_file
 # disown $pid

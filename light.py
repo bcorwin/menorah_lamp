@@ -203,7 +203,7 @@ class Menorah:
     type=(str, str),
     multiple=True
 )
-def main(date_to_run=None, sleep=None, palette=None, pattern=None, data=None):
+def light(date_to_run=None, sleep=None, palette=None, pattern=None, data=None):
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
@@ -252,4 +252,4 @@ def main(date_to_run=None, sleep=None, palette=None, pattern=None, data=None):
 
 
 if __name__ == '__main__':
-    main()
+    light()
