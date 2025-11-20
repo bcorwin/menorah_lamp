@@ -1,4 +1,3 @@
-import palettes as p
 from datetime import datetime, timedelta
 
 chanukah_start_dates = [
@@ -10,8 +9,10 @@ chanukah_start_dates = [
     "2027-12-24",
 ]
 
-chanukah_nights = {(datetime.strptime(d, "%Y-%m-%d") + timedelta(days=i)).date(): i+1
-                   for d in chanukah_start_dates for i in range(8)}
+chanukah_nights = {
+    (datetime.strptime(d, "%Y-%m-%d") + timedelta(days=i)).date(): i+1
+    for d in chanukah_start_dates for i in range(8)
+}
 
 # Christmas eve
 christmas_dates = [datetime.strptime(f"{y}-12-24", "%Y-%m-%d").date() for y in range(2022, 2028)]
