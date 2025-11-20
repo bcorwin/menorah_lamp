@@ -41,7 +41,10 @@ def cycle(lamp, lights, palette, **kwargs):
 
     # Now change them randomly
     num = random.randint(1, max_num)
-    new_lights = [random.choice(lights) for _ in range(num)]
+
+    new_lights = lights[:]
+    random.shuffle(new_lights)
+    new_lights = new_lights[0:num]
     if random_next:
         new_colors = [random.choice(palette.get_all()) for _ in range(num)]
     else:
