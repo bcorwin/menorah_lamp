@@ -7,7 +7,6 @@
 import time
 import random
 
-
 def fan_out(lamp, lights, palette, **kwargs):
     delay = float(kwargs.get("delay", 0.25))
     fade = float(kwargs.get("fade", 0.25))
