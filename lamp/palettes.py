@@ -10,6 +10,9 @@ class Colors:
         self.name = name
         self.colors = colors
 
+    def get_name(self):
+        return self.name
+
     def get_all(self):
         return self.colors
 

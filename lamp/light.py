@@ -7,18 +7,8 @@ import signal
 from random import choice
 from datetime import date
 
-from menorah import Menorah, all_patterns
-import palettes
-
+from menorah import Menorah, all_patterns, all_palettes
 import holiday_dates as hd
-
-# TODO: Make this a dictionary (name, obj) and move to Menorah
-import inspect
-palette_names = [
-    name
-    for name, obj in inspect.getmembers(palettes)
-    if isinstance(obj, palettes.Colors)
-]
 
 signals = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP} 
 
@@ -46,9 +36,9 @@ for sig in signals:
 @click.option(
     "--colors",
     "-c",
-    "palette",
+    "palette_key",
     default=None,
-    type=click.Choice(palette_names, case_sensitive=False),
+    type=click.Choice(sorted(all_palettes.keys()), case_sensitive=False),
     help="Palette name / color-set to use."
 )
 @click.option(
@@ -66,7 +56,7 @@ for sig in signals:
     type=(str, str),
     multiple=True
 )
-def light(date_to_run=None, sleep=None, palette=None, pattern_key=None, data=None):
+def light(date_to_run=None, sleep=None, palette_key=None, pattern_key=None, data=None):
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
@@ -83,21 +73,22 @@ def light(date_to_run=None, sleep=None, palette=None, pattern_key=None, data=Non
             lights = menorah.get_lights(8)
             menorah.print("Night: Not yet Chanukah, using all lights", log=False)
 
-        if palette is not None:
-            palette = getattr(palettes, palette.lower())
+        if palette_key is not None:
+            palette = all_palettes[palette_key.lower()]
         else:
             if date_to_run in hd.christmas_dates:
-                palette = palettes.christmas
+                palette_key = 'christmas'
             elif date_to_run in hd.shabbat_dates:
-                palette = palettes.israel
+                palette_key = 'israel'
             else:
-               palette = getattr(palettes, choice(palette_names))
-        menorah.print(f"Palette: {palette}")
+               palette_key = choice(list(all_palettes.keys()))
+            palette = all_palettes[palette_key]
+        menorah.print(f"Palette: {palette.get_name()}")
 
         if pattern_key is None:
             pattern_key, pattern = choice(list(all_patterns.items()))
         else:
-            pattern = all_patterns[pattern_key]
+            pattern = all_patterns[pattern_key.lower()]
         menorah.print(f"Pattern: {pattern.get_name()}")
 
         params = dict(data)
