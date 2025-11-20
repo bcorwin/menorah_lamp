@@ -1,3 +1,4 @@
+# TODO: Make _lights_on and _lights_off not "private" or use light?
 # TODO: Make these classes? or something more uniform
 # Pattern class that sets everything it needs on init,
 # then a run method that runs in every while loop?

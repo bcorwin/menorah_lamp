@@ -5,11 +5,11 @@ import inspect
 
 import patterns
 
-pattern_names = [
-    name
-    for name, obj in inspect.getmembers(patterns)
-    if callable(obj)
-]
+all_patterns = {
+    key: pattern
+    for key, pattern in inspect.getmembers(patterns)
+    if isinstance(pattern, patterns.Pattern)
+}
 
 class Menorah:
     def __init__(self, print_only=False):
@@ -126,10 +126,6 @@ class Menorah:
 
     def light(self, lights, color=(255, 255, 255), fade=0):
         self._lights_on(lights, [color], fade=fade)
-
-    def run_pattern(self, pattern, **kwargs):
-        f = getattr(patterns, pattern)
-        f(self, **kwargs)
 
     def print(self, message, log=True, **kwargs):
       if log:

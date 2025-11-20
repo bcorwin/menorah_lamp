@@ -7,7 +7,7 @@ import signal
 from random import choice
 from datetime import date
 
-from menorah import Menorah, pattern_names
+from menorah import Menorah, all_patterns
 import palettes
 
 import holiday_dates as hd
@@ -54,8 +54,9 @@ for sig in signals:
 @click.option(
     "--pattern",
     "-p",
+    "pattern_key",
     default=None,
-    type=click.Choice(pattern_names, case_sensitive=False),
+    type=click.Choice(sorted(all_patterns.keys()), case_sensitive=False),
     help="Pattern to use."
 )
 @click.option(
@@ -65,7 +66,7 @@ for sig in signals:
     type=(str, str),
     multiple=True
 )
-def light(date_to_run=None, sleep=None, palette=None, pattern=None, data=None):
+def light(date_to_run=None, sleep=None, palette=None, pattern_key=None, data=None):
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
@@ -76,7 +77,7 @@ def light(date_to_run=None, sleep=None, palette=None, pattern=None, data=None):
         night = hd.chanukah_nights.get(date_to_run)
         if night is not None:
             lights = menorah.get_lights(night)
-            pattern_names.remove("fan_out")
+            _ = all_patterns.pop("fan_out")
             menorah.print(f"Night: {night}")
         else:
             lights = menorah.get_lights(8)
@@ -93,20 +94,18 @@ def light(date_to_run=None, sleep=None, palette=None, pattern=None, data=None):
                palette = getattr(palettes, choice(palette_names))
         menorah.print(f"Palette: {palette}")
 
-        if pattern is None:
-            pattern = choice(pattern_names)
-        menorah.print(f"Pattern: {pattern}")
+        if pattern_key is None:
+            pattern_key, pattern = choice(list(all_patterns.items()))
+        else:
+            pattern = all_patterns[pattern_key]
+        menorah.print(f"Pattern: {pattern.get_name()}")
 
         params = dict(data)
         menorah.print(f"Params: {params}")
 
+        pattern.create(menorah, lights, palette, **params)
         while time.time() < stop_time:
-            menorah.run_pattern(
-                pattern=pattern.lower(),
-                lights=lights,
-                palette=palette,
-                **params
-            )
+            pattern.run()
 
     finally:
         menorah.off()
