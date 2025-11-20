@@ -6,32 +6,18 @@ import subprocess
 from flask import Flask, render_template, request
 from time import sleep, time
 
-
-sys.path.append('../')
-import palettes
-import patterns
+sys.path.append('../lamp')
+from menorah import all_patterns, all_palettes
 
 app = Flask(__name__)
-
-palette_names = {
-    name: str(obj)
-    for name, obj in inspect.getmembers(palettes)
-    if isinstance(obj, palettes.Colors)
-}
-
-pattern_names = {
-    name: name
-    for name, obj in inspect.getmembers(patterns)
-    if callable(obj)
-}
 
 @app.route("/", methods=["GET"])
 def config():
   output = render_template(
     "light.html",
     today=date.today(),
-    palettes=palette_names,
-    patterns=pattern_names,
+    palettes=all_palettes,
+    patterns=all_patterns,
   )
   return output
 
