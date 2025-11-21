@@ -69,11 +69,14 @@ def color_chase(lamp, lights, palette, **kwargs):
     fade = float(kwargs["fade"])
     alternate = to_bool(kwargs, "alternate")
 
+    num_lights = len(lights)
+    palette_size_divides_lights = num_lights % palette.get_size() == 0
+
     color = palette.get_next()
-    for light in lights:
+    for idx, light in enumerate(lights):
         lamp._lights_on([light], [color], fade=fade)
         time.sleep(delay)
-        if alternate:
+        if alternate and ((idx < num_lights - 1) or palette_size_divides_lights):
             color = palette.get_next()
 
 def snake(lamp, lights, palette, **kwargs):
