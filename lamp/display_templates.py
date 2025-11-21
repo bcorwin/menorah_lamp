@@ -1,7 +1,3 @@
-# TODO: Use this for some good looking (and named)
-# default configs of Pattern / Palette / Params
-# that could be used when selecting randomly
-# instaed of always using random paletes and default params
 import sys
 import inspect
 import random

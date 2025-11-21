@@ -77,7 +77,7 @@ def color_chase(lamp, lights, palette, **kwargs):
             color = palette.get_next()
 
 def snake(lamp, lights, palette, **kwargs):
-    # TODO: Add flag to loop around instead of stopping at end then restarting
+    # TODO: Add flag to loop around (or bounce) instead of stopping at end then restarting
     # TODO: Always keep the shamash on?
     delay = float(kwargs["delay"])
     fade = float(kwargs["fade"])
