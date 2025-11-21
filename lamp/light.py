@@ -8,6 +8,7 @@ from random import choice
 from datetime import date
 
 import holiday_dates as hd
+from display_templates import all_templates
 from menorah import Menorah
 from palettes import all_palettes
 from patterns import all_patterns
@@ -20,21 +21,7 @@ def handle_error(x,y):
 for sig in signals:
     signal.signal(sig, handle_error)
 
-
 @click.command()
-@click.option(
-    "--date",
-    "date_to_run",
-    default=str(date.today()),
-    type=click.DateTime(formats=["%Y-%m-%d"]),
-    help="Date to run as."
-)
-@click.option(
-    "--sleep",
-    default=4.5,
-    type=click.FLOAT,
-    help="How long to run for (in hours)."
-)
 @click.option(
     "--colors",
     "-c",
@@ -52,13 +39,34 @@ for sig in signals:
     help="Pattern to use."
 )
 @click.option(
+    "--template",
+    "-t",
+    "template_key",
+    default=None,
+    type=click.Choice(sorted(all_templates.keys()), case_sensitive=False),
+    help="Template to use. This option overrides pattern and some (or all) data."
+)
+@click.option(
     "--data",
     "-d",
     help="Additional data (parameters) to pass to the chosen pattern.",
     type=(str, str),
     multiple=True
 )
-def light(date_to_run=None, sleep=None, palette_key=None, pattern_key=None, data=None):
+@click.option(
+    "--date",
+    "date_to_run",
+    default=str(date.today()),
+    type=click.DateTime(formats=["%Y-%m-%d"]),
+    help="Date to run as."
+)
+@click.option(
+    "--sleep",
+    default=4.5,
+    type=click.FLOAT,
+    help="How long to run for (in hours)."
+)
+def light(palette_key, pattern_key, template_key, data, date_to_run, sleep):
     stop_time = time.time() + 60 * 60 * sleep
     try:
         menorah = Menorah()
@@ -75,25 +83,37 @@ def light(date_to_run=None, sleep=None, palette_key=None, pattern_key=None, data
             lights = menorah.get_lights(8)
             menorah.print("Night: Not yet Chanukah, using all lights", log=False)
 
+        if template_key:
+            template = all_templates[template_key.lower()]
+            menorah.print(f"Pattern: {template.get_name()}")
+        else:
+            template = None
+
         if palette_key is not None:
             palette = all_palettes[palette_key.lower()]
         else:
             if date_to_run in hd.christmas_dates:
-                palette_key = 'christmas'
+                palette = all_palettes['christmas']
             elif date_to_run in hd.shabbat_dates:
-                palette_key = 'israel'
+                palette = all_palettes['israel']
+            elif template:
+                palette = template.get_palette()
             else:
-               palette_key = choice(list(all_palettes.keys()))
-            palette = all_palettes[palette_key]
+                palette_key = choice(list(all_palettes.keys()))
+                palette = all_palettes[palette_key]
         menorah.print(f"Palette: {palette.get_name()}")
 
-        if pattern_key is None:
+        if template:
+            pattern = template.get_pattern()
+        elif pattern_key is None:
             pattern_key, pattern = choice(list(all_patterns.items()))
         else:
             pattern = all_patterns[pattern_key.lower()]
         menorah.print(f"Pattern: {pattern.get_name()}")
 
         params = dict(data)
+        if template:
+            params.update(template.get_params())
         menorah.print(f"Params: {params}")
 
         pattern.create(menorah, lights, palette, **params)

@@ -89,13 +89,12 @@ class Menorah:
         assert len(colors) == len(lights), \
             "Length of colors and lights must match (or set colors as single string)"
 
+        self.print(self, end="\033[A\033[A\033[A\r\033[?25l", log=False)
         if fade <= 0:
             for i in range(len(lights)):
                 self._led_on(lights[i], colors[i])
         else:
             self._fade(lights, colors, fade_time=fade)
-
-        self.print(self, end="\033[A\033[A\033[A\r\033[?25l", log=False)
 
     def _lights_off(self, lights, fade=0):
         if not isinstance(lights, list):

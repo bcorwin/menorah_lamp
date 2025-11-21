@@ -8,6 +8,9 @@
 import time
 import random
 
+def to_bool(params, key, default=True):
+    return params.get(key, str(default)).lower()[0] == "t"
+
 def fan_out(lamp, lights, palette, **kwargs):
     delay = float(kwargs.get("delay", 0.25))
     fade = float(kwargs.get("fade", 0.25))
@@ -37,11 +40,10 @@ def cycle(lamp, lights, palette, **kwargs):
         lamp.light(lights, color=palette.get_next(), fade=fade)
         time.sleep(delay)
 
-    if max_num > len(lights):
-        raise ValueError("max_num must be less than len(lights)")
-
+    max_num = min(max_num, len(lights))
     if min_num == 0:
         min_num = max_num
+    min_num = min(min_num, max_num)
 
     # Now change them randomly
     num = random.randint(min_num, max_num)
@@ -60,12 +62,14 @@ def cycle(lamp, lights, palette, **kwargs):
 def color_chase(lamp, lights, palette, **kwargs):
     delay = float(kwargs.get("delay", 0.25))
     fade = float(kwargs.get("fade", 1))
+    alternate = to_bool(kwargs, "alternate", False)
 
     color = palette.get_next()
-
     for light in lights:
         lamp._lights_on([light], [color], fade=fade)
         time.sleep(delay)
+        if alternate:
+            color = palette.get_next()
 
 def snake(lamp, lights, palette, **kwargs):
     # TODO: Could this replace color chase?
