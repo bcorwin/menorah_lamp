@@ -103,6 +103,33 @@ purples = Colors(
     ]
 )
 
+mexico = Colors(
+    name="Mexico",
+    colors=[
+        (0, 200, 65),
+        WHITE,
+        (200, 16, 46),
+    ]
+)
+
+canada = Colors(
+    name="Canada",
+    colors=[
+        (216, 6, 33),
+        WHITE,
+    ]
+)
+
+# TODO: Improve the colors
+vermont = Colors(
+    name = "Vermont",
+    colors = [
+        (0, 51, 102),
+        (90, 133, 98),
+        (255, 204, 51),
+    ]
+)
+
 current_module = sys.modules[__name__]
 all_palettes = {
     key: palette
