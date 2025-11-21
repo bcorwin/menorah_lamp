@@ -23,12 +23,13 @@ for sig in signals:
 
 @click.command()
 @click.option(
-    "--colors",
+    "--color-set",
     "-c",
     "palette_key",
     default=None,
     type=click.Choice(sorted(all_palettes.keys()), case_sensitive=False),
-    help="Palette name / color-set to use."
+    metavar='PALETTE',
+    help="Palette (color-set) name."
 )
 @click.option(
     "--pattern",
@@ -36,7 +37,8 @@ for sig in signals:
     "pattern_key",
     default=None,
     type=click.Choice(sorted(all_patterns.keys()), case_sensitive=False),
-    help="Pattern to use."
+    metavar='PATTERN',
+    help="Pattern name."
 )
 @click.option(
     "--template",
@@ -44,12 +46,13 @@ for sig in signals:
     "template_key",
     default=None,
     type=click.Choice(sorted(all_templates.keys()), case_sensitive=False),
-    help="Template to use. This option overrides pattern and some (or all) data."
+    metavar='TEMPLATE',
+    help="Template name, overrides pattern and data selections."
 )
 @click.option(
     "--data",
     "-d",
-    help="Additional data (parameters) to pass to the chosen pattern.",
+    help="Parameters (data) to pass to the pattern.",
     type=(str, str),
     multiple=True
 )
@@ -61,13 +64,13 @@ for sig in signals:
     help="Date to run as."
 )
 @click.option(
-    "--sleep",
+    "--run-time",
     default=4.5,
     type=click.FLOAT,
     help="How long to run for (in hours)."
 )
-def light(palette_key, pattern_key, template_key, data, date_to_run, sleep):
-    stop_time = time.time() + 60 * 60 * sleep
+def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
+    stop_time = time.time() + 60 * 60 * run_time
     try:
         menorah = Menorah()
 
