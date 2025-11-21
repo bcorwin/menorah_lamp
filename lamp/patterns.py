@@ -94,6 +94,7 @@ snake = Pattern(
         "fade": 0.01,
         "growing": [False, True],
         "snake_size": range(1, 5),
+        "white": False,  # Looks best when snake_size is 1 and not a white-heavy color palette
     },
 )
 

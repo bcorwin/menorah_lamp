@@ -86,9 +86,15 @@ def snake(lamp, lights, palette, **kwargs):
     fade = float(kwargs["fade"])
     growing = to_bool(kwargs, "growing")
     snake_size = int(kwargs["snake_size"])
+    white = to_bool(kwargs, "white")
 
-    def snake_loop(color, snake_size):
-        off_color = (0, 0, 0)
+    def snake_loop(palette, snake_size):
+        if white:
+            color = (255, 255, 255)
+            off_color = palette.get_next()
+        else:
+            color = palette.get_next()
+            off_color = (0, 0, 0)
 
         for snake_tail in range(num_lights):
             # Index of the head of the snake
@@ -115,13 +121,15 @@ def snake(lamp, lights, palette, **kwargs):
                 # Remove remaining snake at end
                 for j in range(snake_tail, snake_head + 1):
                     # print(f"{snake_tail}-P2-{j}")
-                    lamp._lights_off(lights[j], fade=fade)
+                    lamp._lights_on(lights[j], off_color, fade=fade)
                     time.sleep(delay)  # Don't do this for the last one?
+        if white:
+            time.sleep(delay)
 
     num_lights = len(lights)
     if growing:
         for snake_size in range(1, num_lights + 1):
-            snake_loop(palette.get_next(), snake_size)
+            snake_loop(palette, snake_size)
         time.sleep(delay)
     else:
         if snake_size < 0:
@@ -133,4 +141,4 @@ def snake(lamp, lights, palette, **kwargs):
         # but has an "off" cycle so it is allowed
         snake_size = min(snake_size, num_lights)
 
-        snake_loop(palette.get_next(), snake_size)
+        snake_loop(palette, snake_size)

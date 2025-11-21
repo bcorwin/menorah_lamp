@@ -2,11 +2,12 @@ import sys
 import inspect
 import random
 
-from palettes import all_palettes
+from palettes import all_palettes, WHITE
 import patterns
 
 all_palettes = list(all_palettes.values())
 two_color_palettes = [p for p in all_palettes if p.get_size() == 2]
+non_white_palettes = [p for p in all_palettes if WHITE not in p.get_all()]
 
 class PatternTemplate(patterns.Pattern):
     def __init__(self, name, pattern, palettes=all_palettes, params={}):
@@ -66,6 +67,19 @@ sunrise = PatternTemplate(
         "fade": 10,
         "delay": 10,
         "alternate": True,
+    }
+)
+
+white_snake = PatternTemplate(
+    name = "White snake",
+    pattern = patterns.snake,
+    palettes = non_white_palettes,
+    params = {
+        "delay": 0.25,
+        "fade": 0.01,
+        "growing": False,
+        "snake_size": 1,
+        "white": True,
     }
 )
 
