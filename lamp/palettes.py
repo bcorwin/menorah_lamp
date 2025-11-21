@@ -12,6 +12,9 @@ class Colors:
         self.name = name
         self.colors = colors
 
+    def get_size(self):
+        return len(self.colors)
+
     def get_name(self):
         return self.name
 

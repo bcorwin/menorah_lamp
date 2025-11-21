@@ -10,6 +10,7 @@ from palettes import all_palettes
 import patterns
 
 all_palettes = list(all_palettes.values())
+two_color_palettes = [p for p in all_palettes if p.get_size() == 2]
 
 class DisplayTemplate:
     def __init__(self, name, pattern, palettes=all_palettes, params={}):
@@ -42,6 +43,7 @@ class DisplayTemplate:
 blink = DisplayTemplate(
     name = "Blink",
     pattern = patterns.cycle,
+    palettes = two_color_palettes,
     params = {
         "min_num": 0,
         "reset": False,
