@@ -117,16 +117,15 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
         params = dict(data)
         if template:
             params.update(template.get_params())
-        menorah.print(f"Params: {params}")
+        all_params = pattern.create(menorah, lights, palette, **params)
+        menorah.print(f"Params: {all_params}")
 
-        pattern.create(menorah, lights, palette, **params)
         while time.time() < stop_time:
             pattern.run()
 
     finally:
         menorah.off()
         menorah.print("\n\nPutting out the Menorah.\033[?25h", log=False)
-
 
 if __name__ == '__main__':
     light()

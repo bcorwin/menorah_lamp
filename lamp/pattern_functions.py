@@ -8,13 +8,14 @@
 import time
 import random
 
-def to_bool(params, key, default=True):
-    return params.get(key, str(default)).lower()[0] == "t"
+def to_bool(params, key):
+    return params[key].lower()[0] == "t"
 
 def fan_out(lamp, lights, palette, **kwargs):
-    delay = float(kwargs.get("delay", 0.25))
-    fade = float(kwargs.get("fade", 0.25))
-    keep_on = kwargs.get("keep_on", "true").lower()[0] == "t"
+    delay = float(kwargs["delay"])
+    fade = float(kwargs["fade"])
+    keep_on = to_bool(kwargs, "keep_on")
+    # TODO: alternate (true = by light, false = by cycle)
 
     colors = palette.get_next(5)
 
@@ -29,19 +30,23 @@ def fan_out(lamp, lights, palette, **kwargs):
         lamp.off(fade=fade)
 
 def cycle(lamp, lights, palette, **kwargs):
-    min_num = int(kwargs.get("min_num", 1))
-    max_num = int(kwargs.get("max_num", len(lights)))
-    fade = float(kwargs.get("fade", 1))
-    delay = float(kwargs.get("delay", 1))
-    random_next = kwargs.get("random_next", "false").lower()[0] == "t"
-    reset = kwargs.get("reset", "true").lower()[0] == "t"
+    min_num = int(kwargs["min_num"])
+    max_num = int(kwargs["max_num"])
+    fade = float(kwargs["fade"])
+    delay = float(kwargs["delay"])
+    random_next = to_bool(kwargs, "random_next")
+    reset = to_bool(kwargs, "reset")  # TODO: reset to off instead of next?
 
     if reset:
         lamp.light(lights, color=palette.get_next(), fade=fade)
         time.sleep(delay)
 
-    max_num = min(max_num, len(lights))
-    if min_num == 0:
+    num_lights = len(lights)
+    if max_num <= 0:
+        max_num = num_lights + max_num
+    max_num = min(max_num, num_lights)
+
+    if min_num <= 0:
         min_num = max_num
     min_num = min(min_num, max_num)
 
@@ -60,9 +65,9 @@ def cycle(lamp, lights, palette, **kwargs):
     time.sleep(delay)
 
 def color_chase(lamp, lights, palette, **kwargs):
-    delay = float(kwargs.get("delay", 0.25))
-    fade = float(kwargs.get("fade", 1))
-    alternate = to_bool(kwargs, "alternate", False)
+    delay = float(kwargs["delay"])
+    fade = float(kwargs["fade"])
+    alternate = to_bool(kwargs, "alternate")
 
     color = palette.get_next()
     for light in lights:
@@ -72,13 +77,12 @@ def color_chase(lamp, lights, palette, **kwargs):
             color = palette.get_next()
 
 def snake(lamp, lights, palette, **kwargs):
-    # TODO: Could this replace color chase?
     # TODO: Add flag to loop around instead of stopping at end then restarting
     # TODO: Always keep the shamash on?
-    delay = float(kwargs.get("delay", 0.25))
-    fade = float(kwargs.get("fade", 0.01))
-    growing = kwargs.get("growing", 'false').lower()[0] == 't'
-    snake_size = int(kwargs.get("snake_size", 0))
+    delay = float(kwargs["delay"])
+    fade = float(kwargs["fade"])
+    growing = to_bool(kwargs, "growing")
+    snake_size = int(kwargs["snake_size"])
 
     def snake_loop(color, snake_size):
         off_color = (0, 0, 0)
@@ -113,13 +117,17 @@ def snake(lamp, lights, palette, **kwargs):
 
     num_lights = len(lights)
     if growing:
-        for snake_size in range(1, num_lights):
+        for snake_size in range(1, num_lights + 1):
             snake_loop(palette.get_next(), snake_size)
         time.sleep(delay)
     else:
-        if not snake_size:
-            snake_size = 3 if num_lights > 3 else num_lights - 1
-        if snake_size >= num_lights:
-            raise ValueError("snake_size must be less than num_lights")
+        if snake_size < 0:
+            snake_size = num_lights + snake_size
+        # If snake_size is set to 0, this is the same as color_chase
+        # so don't allow it
+        snake_size = max(snake_size, 1)
+        # If snake_size = num_lights, it's akin to color_chase
+        # but has an "off" cycle so it is allowed
+        snake_size = min(snake_size, num_lights)
 
         snake_loop(palette.get_next(), snake_size)

@@ -14,21 +14,30 @@ two_color_palettes = [p for p in all_palettes if p.get_size() == 2]
 
 class DisplayTemplate:
     def __init__(self, name, pattern, palettes=all_palettes, params={}):
+        if params.keys() != pattern.get_defaults(keys_only=True):
+            raise RuntimeError("All params must be set in a pattern.")
+
         self.name = name
         self.pattern = pattern
         self.palettes = palettes
         self.params = params
+        
+
     def _select_param(self, param):
         if isinstance(param, list) or isinstance(param, range):
             return random.choice(param)
         else:
             return param
+
     def get_name(self):
         return self.name
+
     def get_pattern(self):
         return self.pattern
+
     def get_palette(self):
         return self._select_param(self.palettes)
+
     def get_params(self):
         out = {}
         for key, value in self.params.items():
@@ -45,10 +54,12 @@ blink = DisplayTemplate(
     pattern = patterns.cycle,
     palettes = two_color_palettes,
     params = {
-        "min_num": 0,
-        "reset": False,
         "fade": 0,
-        "delay": [x / 10 for x in range(2,6)]
+        "delay": [x / 10 for x in range(2,6)],
+        "min_num": 0,
+        "max_num": 0,
+        "random_next": False,
+        "reset": False,
     }
 )
 
@@ -56,10 +67,13 @@ breath = DisplayTemplate(
     name = "Breath",
     pattern = patterns.cycle,
     params = {
-        "min_num": 9,
-        "max_num": 9,
-        "reset": False,
         "fade": range(5, 11),
+        "delay": 1.0,
+        "min_num": 0,
+        "max_num": 0,
+        "reset": False,
+        "random_next": False,
+        "reset": False,
     }
 )
 
