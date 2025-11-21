@@ -7,8 +7,10 @@ import signal
 from random import choice
 from datetime import date
 
-from menorah import Menorah, all_patterns, all_palettes
 import holiday_dates as hd
+from menorah import Menorah
+from palettes import all_palettes
+from patterns import all_patterns
 
 signals = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP} 
 

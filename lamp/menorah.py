@@ -3,21 +3,6 @@ import time
 import colr
 import inspect
 
-import palettes
-import patterns
-
-all_palettes = {
-    key: palette
-    for key, palette in inspect.getmembers(palettes)
-    if isinstance(palette, palettes.Colors)
-}
-
-all_patterns = {
-    key: pattern
-    for key, pattern in inspect.getmembers(patterns)
-    if isinstance(pattern, patterns.Pattern)
-}
-
 
 class Menorah:
     def __init__(self, print_only=False):

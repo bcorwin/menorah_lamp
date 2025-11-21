@@ -1,3 +1,6 @@
+import sys
+import inspect
+
 import pattern_functions as pf
 
 class Pattern:
@@ -30,3 +33,10 @@ cycle = Pattern("Cycle", pf.cycle)
 color_chase = Pattern("Color chase", pf.color_chase)
 
 snake = Pattern("Snake", pf.snake)
+
+current_module = sys.modules[__name__]
+all_patterns = {
+    key: pattern
+    for key, pattern in inspect.getmembers(current_module)
+    if isinstance(pattern, Pattern)
+}

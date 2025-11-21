@@ -1,3 +1,5 @@
+import sys
+import inspect
 from random import choice
 
 WHITE = (255, 255, 255)
@@ -87,3 +89,20 @@ starry_night = Colors(
         (100, 13, 55),
     ]
 )
+
+purples = Colors(
+    name = "Purples",
+    colors = [
+        (84, 8, 99),
+        (146, 72, 122),
+        (228, 155, 166),
+        (255, 211, 213),
+    ]
+)
+
+current_module = sys.modules[__name__]
+all_palettes = {
+    key: palette
+    for key, palette in inspect.getmembers(current_module)
+    if isinstance(palette, Colors)
+}

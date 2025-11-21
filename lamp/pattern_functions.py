@@ -26,6 +26,7 @@ def fan_out(lamp, lights, palette, **kwargs):
         lamp.off(fade=fade)
 
 def cycle(lamp, lights, palette, **kwargs):
+    min_num = int(kwargs.get("min_num", 1))
     max_num = int(kwargs.get("max_num", len(lights)))
     fade = float(kwargs.get("fade", 1))
     delay = float(kwargs.get("delay", 1))
@@ -39,8 +40,11 @@ def cycle(lamp, lights, palette, **kwargs):
     if max_num > len(lights):
         raise ValueError("max_num must be less than len(lights)")
 
+    if min_num == 0:
+        min_num = max_num
+
     # Now change them randomly
-    num = random.randint(1, max_num)
+    num = random.randint(min_num, max_num)
 
     new_lights = lights[:]
     random.shuffle(new_lights)
