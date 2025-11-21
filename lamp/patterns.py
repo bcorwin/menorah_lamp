@@ -1,9 +1,3 @@
-# TODO: What is a template but a super or sub class of a pattern?
-# They're the same except with different defaults
-# and a potential subset of palettes to use (and checks if all params are set).
-# How can I combine these concepts?
-# Palette is used in Pattern to run,
-# a list could be passed instead (or stored if a template)
 import sys
 import inspect
 from random import choice
@@ -15,7 +9,6 @@ class Pattern:
         self.name = name
         self.func = func
         # TODO: Allow to be a list so I can make it so params don't conflict
-        # TODO: Include template params (or use these instead??) as defaults
         self.defaults = defaults
 
         self.params = None

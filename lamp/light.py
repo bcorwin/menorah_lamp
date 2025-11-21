@@ -8,7 +8,7 @@ from random import choice
 from datetime import date
 
 import holiday_dates as hd
-from display_templates import all_templates
+from pattern_templates import PatternTemplate, all_templates
 from menorah import Menorah
 from palettes import all_palettes
 from patterns import all_patterns
@@ -87,10 +87,15 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
             menorah.print("Night: Not yet Chanukah, using all lights", log=False)
 
         if template_key:
-            template = all_templates[template_key.lower()]
-            menorah.print(f"Pattern: {template.get_name()}")
+            pattern = all_templates[template_key.lower()]
+        elif pattern_key is None:
+            pattern_key, pattern = choice(
+                list(all_patterns.items()) +
+                list(all_templates.items())
+            )
         else:
-            template = None
+            pattern = all_patterns[pattern_key.lower()]
+        menorah.print(f"Pattern: {pattern.get_name()}")
 
         if palette_key is not None:
             palette = all_palettes[palette_key.lower()]
@@ -99,24 +104,14 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
                 palette = all_palettes['christmas']
             elif date_to_run in hd.shabbat_dates:
                 palette = all_palettes['israel']
-            elif template:
-                palette = template.get_palette()
+            elif isinstance(pattern, PatternTemplate):
+                palette = pattern.get_palette()
             else:
                 palette_key = choice(list(all_palettes.keys()))
                 palette = all_palettes[palette_key]
         menorah.print(f"Palette: {palette.get_name()}")
 
-        if template:
-            pattern = template.get_pattern()
-        elif pattern_key is None:
-            pattern_key, pattern = choice(list(all_patterns.items()))
-        else:
-            pattern = all_patterns[pattern_key.lower()]
-        menorah.print(f"Pattern: {pattern.get_name()}")
-
         params = dict(data)
-        if template:
-            params.update(template.get_params())
         all_params = pattern.create(menorah, lights, palette, **params)
         menorah.print(f"Params: {all_params}")
 

@@ -8,44 +8,30 @@ import patterns
 all_palettes = list(all_palettes.values())
 two_color_palettes = [p for p in all_palettes if p.get_size() == 2]
 
-class DisplayTemplate:
+class PatternTemplate(patterns.Pattern):
     def __init__(self, name, pattern, palettes=all_palettes, params={}):
         if params.keys() != pattern.get_defaults(keys_only=True):
             raise RuntimeError("All params must be set in a pattern.")
 
-        self.name = name
-        self.pattern = pattern
+        pattern_name = pattern.get_name()
+        name = f"{pattern_name} ({name})"
+
+        super().__init__(name, pattern.func, defaults=params)
         self.palettes = palettes
-        self.params = params
-        
-
-    def _select_param(self, param):
-        if isinstance(param, list) or isinstance(param, range):
-            return random.choice(param)
-        else:
-            return param
-
-    def get_name(self):
-        return self.name
-
-    def get_pattern(self):
-        return self.pattern
 
     def get_palette(self):
         return self._select_param(self.palettes)
 
-    def get_params(self):
-        out = {}
-        for key, value in self.params.items():
-            out[key] = str(self._select_param(value))
-        return out
+    def create(self, lamp, lights, palette, **kwargs):
+        # Drop kwargs so it uses the params set in the template
+        return super().create(lamp, lights, palette)
 
 
 # Chaos: cycle, min_num = max_num = len(lights), reset = false, palette = rainbow? or other high count
 # Sparkle: cycle, min_num = max_num = len(lights), reset = false, palette = low color count
 # Alternate: something with even / odd 
 
-blink = DisplayTemplate(
+blink = PatternTemplate(
     name = "Blink",
     pattern = patterns.cycle,
     palettes = two_color_palettes,
@@ -59,7 +45,7 @@ blink = DisplayTemplate(
     }
 )
 
-breath = DisplayTemplate(
+breath = PatternTemplate(
     name = "Breath",
     pattern = patterns.cycle,
     params = {
@@ -73,7 +59,7 @@ breath = DisplayTemplate(
     }
 )
 
-sunrise = DisplayTemplate(
+sunrise = PatternTemplate(
     name = "Sunrise",
     pattern = patterns.color_chase,
     params = {
@@ -81,11 +67,11 @@ sunrise = DisplayTemplate(
         "delay": 10,
         "alternate": True,
     }
-)   
+)
 
 current_module = sys.modules[__name__]
 all_templates = {
     key: template
     for key, template in inspect.getmembers(current_module)
-    if isinstance(template, DisplayTemplate)
+    if isinstance(template, PatternTemplate)
 }
