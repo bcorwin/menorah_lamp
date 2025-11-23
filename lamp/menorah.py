@@ -10,7 +10,7 @@ class Menorah:
         self.shamash = 4
         self.interactive = sys.stdin.isatty()
         self.print_only = print_only
-        self.config_file = "config.txt"
+        self.config_file = "/home/pi/menorah_lamp/config.txt"
 
         with open(self.config_file, "w") as f:
           f.write("")

@@ -6,8 +6,9 @@ import subprocess
 from flask import Flask, render_template, request
 from time import sleep, time
 
-sys.path.append('../lamp')
-from menorah import all_patterns, all_palettes
+sys.path.append('/home/pi/menorah_lamp/lamp')
+from patterns import all_patterns
+from palettes import all_palettes
 
 app = Flask(__name__)
 
@@ -28,7 +29,7 @@ def set_state():
   if lighting:
     cmd = ["sudo", "../light_menorah.sh"]
     cmd.extend(["--date", d["run_as_date"]])
-    cmd.extend(["--sleep", str(int(d["run_length"]) / 60)])
+    cmd.extend(["--run-time", str(int(d["run_length"]) / 60)])
 
     palette = d["palette"]
     if palette != "None":
@@ -60,7 +61,7 @@ def set_state():
   )
 
   if lighting:
-    config_path = "config.txt"
+    config_path = "/home/pi/menorah_lamp/config.txt"
     while (time() - path.getmtime(config_path)) > 1:
       sleep(0.5)
     with open(config_path) as f:
