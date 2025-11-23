@@ -7,6 +7,9 @@
         document.getElementById("config_form").style.display = "none";
         document.getElementById("lighting").style.display = "inline";
       }
+      function show_value(x) {
+        document.getElementById("ran_length_value").innerHTML = x;
+      }
     </script>
   </head>
   <body>
@@ -16,8 +19,19 @@
         <input type="date" id="run_as_date" name="run_as_date" value="{{ today }}">
       </div>
       <div>
-        <label for="run_length">Run time (mins):</label>
-        <input type="number" id="run_length" name="run_length" min="10" max="180" value="10" step="10">
+        <label for="run_length">Run time (mins):
+          <span id="ran_length_value">60</span>
+        </label>
+        <input
+          type="range"
+          id="run_length"
+          name="run_length"
+          min="10"
+          max="180"
+          value="60"
+          step="10"
+          oninput="show_value(this.value);"
+        >
       </div>
       <div>
         <label for="template">*Template:</label>
@@ -48,7 +62,13 @@
       </div>
       <div>
         <label for="params">Optional parameters:</label>
-        <textarea id="params" name="params" cols="40" rows="5" placeholder="key value&#10;key value&#10;..."></textarea>
+        <textarea
+          id="params"
+          name="params"
+          cols="40"
+          rows="5"
+          placeholder="key value&#10;key value&#10;...">
+        </textarea>
       </div>
       <div class="button-row">
         <button type="submit" name="light" onclick="loading()">Light</button>

@@ -68,7 +68,7 @@ def set_state():
 
   if lighting:
     config_path = "/home/pi/menorah_lamp/config.txt"
-    while (time() - path.getmtime(config_path)) > 5:
+    while (time() - path.getmtime(config_path)) > 10:
       sleep(0.5)
     with open(config_path) as f:
       cmd_output = f.read().strip()
