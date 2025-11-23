@@ -1,46 +1,67 @@
 <html>
-  <script>
-    function loading() {
-      document.getElementById("config_form").style.display = "none";
-      document.getElementById("lighting").style.display = "inline";
-    }
-  </script>
-  <form action="/set_state" method="POST" id="config_form">
-    <div>
-      <label for="run_as_date">Run as date</label>
-      <input type="date" id="run_as_date" name="run_as_date" value="{{ today }}">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+      function loading() {
+        document.getElementById("config_form").style.display = "none";
+        document.getElementById("lighting").style.display = "inline";
+      }
+    </script>
+  </head>
+  <body>
+    <form action="/set_state" method="POST" id="config_form">
+      <div>
+        <label for="run_as_date">Run as date:</label>
+        <input type="date" id="run_as_date" name="run_as_date" value="{{ today }}">
+      </div>
+      <div>
+        <label for="run_length">Run time (mins):</label>
+        <input type="number" id="run_length" name="run_length" min="10" max="180" value="10" step="10">
+      </div>
+      <div>
+        <label for="template">*Template:</label>
+        <select id="template" name="template" required>
+          <option value="None">No template / auto-select</option>
+          {% for value, name in templates.items() %}
+            <option value="{{ value }}">{{ name.get_name() }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="pattern">Light pattern:</label>
+        <select id="pattern" name="pattern" required>
+          <option value="None">Random pattern</option>
+          {% for value, name in patterns.items() %}
+            <option value="{{ value }}">{{ name.get_name() }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="palette">Color palette:</label>
+        <select id="palette" name="palette" required>
+          <option value="None">Random palette / auto-select</option>
+          {% for value, name in palettes.items() %}
+            <option value="{{ value }}">{{ name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="params">Optional parameters:</label>
+        <textarea id="params" name="params" cols="40" rows="5" placeholder="key value&#10;key value&#10;..."></textarea>
+      </div>
+      <div class="button-row">
+        <button type="submit" name="light" onclick="loading()">Light</button>
+        <button type="submit" name="extinguish">Extinguish</button>
+      </div>
+      <div>
+        <small class="help">
+           *Selecting a template overrides pattern and parameters.
+        </small>
+      </div>
+    </form>
+    <div id="lighting" style="display:none; text-align:center;">
+      Lighting the menorah...
     </div>
-    <div>
-      <label for="run_length">Run time (mins)</label>
-      <input type="number" id="run_length" name="run_length" min="10" max="180" value="10" step="10">
-    </div>
-    <div>
-      <label for="palette">Color palette</label>
-      <select id="palette" name="palette" required>
-        <option value="None">Random palette / auto-select</option>
-        {% for value, name in palettes.items() %}
-          <option value="{{ value }}">{{ name }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div>
-      <label for="pattern">Light pattern</label>
-      <select id="pattern" name="pattern" required>
-        <option value="None">Random pattern</option>
-        {% for value, name in patterns.items() %}
-          <option value="{{ value }}">{{ name.get_name() }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div>
-      <label for="params">Optional parameters</label>
-      <br/>
-      <textarea id="params" name="params" cols="40" rows="5" placeholder="key value&#10;key value&#10;..."></textarea>
-    </div>
-    <button type="submit" name="light" onclick="loading()">Light</button>
-    <button type="submit" name="extinguish">Extinguish</button>
-  </form>
-  <div id="lighting" style="display:none">
-    Lighting the menorah...
-  </div>
+  </body>
 </html>

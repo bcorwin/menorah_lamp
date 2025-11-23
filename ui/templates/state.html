@@ -1,15 +1,21 @@
 <html>
-  <div>{{ message }}</div>
-  <div>
-    {% if cmd_output %}
-      <ul>
-      {% for item in cmd_output %}
-        <li>{{ item }}</li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-  </div>
-  <form action="/">
-    <input type="submit" value="Re-config menorah" />
-  </form>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <div>{{ message }}</div>
+    <div>
+      {% if cmd_output %}
+        <ul>
+        {% for item in cmd_output %}
+          <li>{{ item }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    <form action="/">
+      <input type="submit" value="Re-config menorah" />
+    </form>
+  </body>
 </html>

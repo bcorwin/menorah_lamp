@@ -15,7 +15,7 @@ class PatternTemplate(patterns.Pattern):
             raise RuntimeError("All params must be set in a pattern.")
 
         pattern_name = pattern.get_name()
-        name = f"{pattern_name} ({name})"
+        name = f"{name} ({pattern_name})"
 
         super().__init__(name, pattern.func, defaults=params)
         self.palettes = palettes

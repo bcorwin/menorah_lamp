@@ -9,6 +9,7 @@ from time import sleep, time
 sys.path.append('/home/pi/menorah_lamp/lamp')
 from patterns import all_patterns
 from palettes import all_palettes
+from pattern_templates import all_templates
 
 app = Flask(__name__)
 
@@ -19,6 +20,7 @@ def config():
     today=date.today(),
     palettes=all_palettes,
     patterns=all_patterns,
+    templates=all_templates,
   )
   return output
 
@@ -30,6 +32,10 @@ def set_state():
     cmd = ["sudo", "../light_menorah.sh"]
     cmd.extend(["--date", d["run_as_date"]])
     cmd.extend(["--run-time", str(int(d["run_length"]) / 60)])
+
+    template = d["template"]
+    if template != "None":
+      cmd.extend(["--template", template])
 
     palette = d["palette"]
     if palette != "None":
@@ -62,7 +68,7 @@ def set_state():
 
   if lighting:
     config_path = "/home/pi/menorah_lamp/config.txt"
-    while (time() - path.getmtime(config_path)) > 1:
+    while (time() - path.getmtime(config_path)) > 5:
       sleep(0.5)
     with open(config_path) as f:
       cmd_output = f.read().strip()
