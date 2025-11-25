@@ -4,14 +4,12 @@
     <link rel="stylesheet" href="/static/style.css">
   </head>
   <body>
-    <div>{{ message }}</div>
-    <div>
-      {% if cmd_output %}
-        <ul>
-        {% for item in cmd_output %}
-          <li>{{ item }}</li>
-        {% endfor %}
-        </ul>
+    <div class="centered">
+      <h2 id="message">{{ message }}</h2>
+      {% if config %}
+      <pre id="config">
+{{ config | safe }}
+      </pre>
       {% endif %}
     </div>
     <form action="/">

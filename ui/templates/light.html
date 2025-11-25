@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="/static/style.css">
     <script>
       function loading() {
+        document.getElementById("current_config").style.display = "none";
         document.getElementById("config_form").style.display = "none";
         document.getElementById("lighting").style.display = "inline";
       }
@@ -13,6 +14,14 @@
     </script>
   </head>
   <body>
+    {% if config %}
+    <div id="current_config" class="centered">
+      <h2 id="message">Current configuration:</h2>
+      <pre id="config">
+{{ config | safe }}
+      </pre>
+    </div>
+    {% endif %}
     <form action="/set_state" method="POST" id="config_form">
       <div>
         <label for="run_as_date">Run as date:</label>
@@ -80,7 +89,7 @@
         </small>
       </div>
     </form>
-    <div id="lighting" style="display:none; text-align:center;">
+    <div id="lighting" style="display:none" class="centered">
       Lighting the menorah...
     </div>
   </body>

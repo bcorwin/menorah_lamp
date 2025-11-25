@@ -54,6 +54,12 @@ small.help {
   gap: 0.5rem;
 }
 
+.centered {
+  max-width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 @media (max-width: 480px) {
   .button-row {
     flex-direction: column;

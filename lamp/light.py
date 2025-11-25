@@ -75,16 +75,16 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
         menorah = Menorah()
 
         date_to_run = date_to_run.date()
-        menorah.print(f"Date: {date_to_run}")
+        menorah.print({"Date": str(date_to_run)})
 
         night = hd.chanukah_nights.get(date_to_run)
         if night is not None:
             lights = menorah.get_lights(night)
             _ = all_patterns.pop("fan_out")
-            menorah.print(f"Night: {night}")
+            menorah.print({"Night": night})
         else:
             lights = menorah.get_lights(8)
-            menorah.print("Night: Not yet Chanukah, using all lights", log=False)
+            menorah.print({"Night": "N/A (using all lights)"})
 
         if template_key:
             pattern = all_templates[template_key.lower()]
@@ -95,7 +95,7 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
             )
         else:
             pattern = all_patterns[pattern_key.lower()]
-        menorah.print(f"Pattern: {pattern.get_name()}")
+        menorah.print({"Pattern": pattern.get_name()})
 
         if palette_key is not None:
             palette = all_palettes[palette_key.lower()]
@@ -109,11 +109,11 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
             else:
                 palette_key = choice(list(all_palettes.keys()))
                 palette = all_palettes[palette_key]
-        menorah.print(f"Palette: {palette.get_name()}")
+        menorah.print({"Palette": palette.get_name()})
 
         params = dict(data)
         all_params = pattern.create(menorah, lights, palette, **params)
-        menorah.print(f"Params: {all_params}")
+        menorah.print({"Params": all_params})
 
         while time.time() < stop_time:
             pattern.run()

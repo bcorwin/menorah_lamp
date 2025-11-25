@@ -2,4 +2,5 @@
 **/__pycache__/**
 **.swp
 app.pid
-**/config.txt
+config.yml
+

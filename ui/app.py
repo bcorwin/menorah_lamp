@@ -12,6 +12,14 @@ from palettes import all_palettes
 from pattern_templates import all_templates
 
 app = Flask(__name__)
+config_path = "/home/pi/menorah_lamp/config.yml"
+
+def get_current_config():
+    with open(config_path, "r") as file:
+      yaml_string = file.read()
+    if yaml_string:
+      yaml_string = yaml_string.replace("\n", "<br>")
+    return yaml_string
 
 @app.route("/", methods=["GET"])
 def config():
@@ -21,6 +29,7 @@ def config():
     palettes=all_palettes,
     patterns=all_patterns,
     templates=all_templates,
+    config=get_current_config()
   )
   return output
 
@@ -53,7 +62,7 @@ def set_state():
         key, value = param.split(' ')
         cmd.extend(["--data", key, value])
 
-    message = "Menorah lit:"
+    message = "Menorah configurations:"
   else:
     cmd = ["sudo", "../extinguish_menorah.sh"]
     message = "Menorah extinguished."
@@ -67,20 +76,20 @@ def set_state():
   )
 
   if lighting:
-    config_path = "/home/pi/menorah_lamp/config.txt"
-    while (time() - path.getmtime(config_path)) > 5:
-      sleep(0.1)
     sleep(1)
-    with open(config_path) as f:
-      cmd_output = f.read().strip()
-    cmd_output = cmd_output.split("\n")
+    for i in range(30):
+      config_data = get_current_config()
+      if config_data:
+        break
+      else:
+        sleep(0.5)
   else:
-    cmd_output = None
+    config_data = None
 
   output = render_template(
     "state.html",
     message=message,
-    cmd_output=cmd_output,
+    config=config_data,
   )
   return output
 

@@ -1,6 +1,7 @@
 import sys
 import time
 import colr
+import yaml
 import inspect
 
 
@@ -10,10 +11,10 @@ class Menorah:
         self.shamash = 4
         self.interactive = sys.stdin.isatty()
         self.print_only = print_only
-        self.config_file = "/home/pi/menorah_lamp/config.txt"
-
+        self.config_file = "/home/pi/menorah_lamp/config.yml"
+        
         with open(self.config_file, "w") as f:
-          f.write("")
+            f.write("")
 
         if not print_only:
             import board
@@ -115,6 +116,8 @@ class Menorah:
 
     def off(self, fade=0):
         self._lights_off(list(range(9)), fade=fade)
+        with open(self.config_file, "w") as f:
+            f.write("")
 
     def light(self, lights, color=(255, 255, 255), fade=0):
         self._lights_on(lights, [color], fade=fade)
@@ -122,7 +125,11 @@ class Menorah:
     def print(self, message, log=True, **kwargs):
       if log:
         with open(self.config_file, "a") as f:
-          f.write(str(message) + "\n")
+            yaml.dump(message, f)
         
       if self.interactive:
-        print(message, **kwargs)
+        if isinstance(message, dict):
+            for key, value in message.items():
+                print(f"{key}: {value}", **kwargs)
+        else:
+            print(message, **kwargs)
