@@ -17,11 +17,14 @@
   </head>
   <body>
     {% if config %}
-    <div id="current_config" class="centered">
-      <h2 id="message">Current configuration:</h2>
-      <pre id="config">
+    <div id="current_config">
+      <details class="centered">
+        <summary>Click to view current configuration</summary>
+        <pre id="config">
 {{ config | safe }}
       </pre>
+      </details>
+      <hr>
     </div>
     {% endif %}
     <form action="/set_state" method="POST" id="config_form">
