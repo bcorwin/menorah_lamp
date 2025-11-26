@@ -4,9 +4,11 @@
     <link rel="stylesheet" href="/static/style.css">
     <script>
       function loading() {
-        document.getElementById("current_config").style.display = "none";
         document.getElementById("config_form").style.display = "none";
-        document.getElementById("lighting").style.display = "inline";
+        document.getElementById("lighting").style.visibility = "visible";
+        if(document.getElementById("current_config")) {
+          document.getElementById("current_config").style.display = "none";
+        }
       }
       function show_value(x) {
         document.getElementById("ran_length_value").innerHTML = x;
@@ -89,8 +91,11 @@
         </small>
       </div>
     </form>
-    <div id="lighting" style="display:none" class="centered">
-      Lighting the menorah...
+    <div id="lighting" style="visibility:hidden" class="centered">
+      <figure style="text-align: center;">
+        <figcaption>Lighting the menorah...</figcaption>
+        <img src="static/menorah.gif" width="100px"><br>
+      </figure>
     </div>
   </body>
 </html>
