@@ -23,7 +23,7 @@ for sig in signals:
 
 @click.command()
 @click.option(
-    "--color-set",
+    "--colors",
     "-c",
     "palette_key",
     default=None,

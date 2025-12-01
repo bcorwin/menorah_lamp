@@ -39,7 +39,7 @@ class Pattern:
         params = {}
         for key, default in self.defaults.items():
             default_val = self._select_param(default)
-            params[key] = str(kwargs.get(key, default_val))
+            params[key.lower()] = str(kwargs.get(key, default_val)).lower()
         self.params = params
 
         return self.params

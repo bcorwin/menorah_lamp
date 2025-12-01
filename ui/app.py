@@ -59,6 +59,7 @@ def set_state():
       for param in params.splitlines(keepends=False):
         if ' ' not in param:
           continue
+        param = param.strip()
         key, value = param.split(' ')
         cmd.extend(["--data", key, value])
 
@@ -67,13 +68,13 @@ def set_state():
     cmd = ["sudo", "../extinguish_menorah.sh"]
     message = "Menorah extinguished."
 
-  print(cmd)
   process = subprocess.Popen(
     cmd,
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
     shell=False
   )
+  print("Running:", subprocess.list2cmdline(process.args))
 
   if lighting:
     sleep(1)
