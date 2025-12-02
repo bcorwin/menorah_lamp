@@ -1,3 +1,4 @@
+import re
 import sys
 import inspect
 from os import path
@@ -57,15 +58,11 @@ def set_state():
     params = d["params"]
     if params != "":
       for param in params.splitlines(keepends=False):
-        # TODO: Tidy this up with the goal of being able to
-        # 1) copy and paste from the output
-        # 2) flexibility
-        param = param.strip().replace("'", "").replace(":", " ").replace("  ", " ")
-        if ' ' not in param:
-          continue
-        param = param.strip()
-        key, value = param.split(' ')
-        cmd.extend(["--data", key, value])
+        param = re.search(r"(\w+)[\W]+([\w\.]+)", param)
+        if param:
+          key = param.group(1)
+          value = param.group(2)
+          cmd.extend(["--data", key, value])
 
     message = "Menorah configurations:"
   else:
