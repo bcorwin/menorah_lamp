@@ -1,18 +1,20 @@
-# DO NOT USE THIS IF YOU WANT TO RUN IT INTERACTIVELY.
-# TO RUN INTERACTIVELY RUN ./menorah.py
+#!/bin/bash
 
-# TODO: run menorah in background so this can exit and I don't need ctrl-c
-# TODO: Fix the way things print to the terminal
-# TODO: Print errors to log?
-# TODO: use extinguish_menorah.sh instead
+# DO NOT USE THIS IF YOU WANT TO RUN IT INTERACTIVELY.
+# TO RUN INTERACTIVELY RUN ./lamp/light.py
 
 pid_file=/home/pi/menorah_lamp/app.pid
 log_file=/home/pi/menorah_lamp/log.txt
 
+if [ "$EUID" -ne 0 ]; then
+  echo "This script must be run with sudo or as the root user."
+  exit 1
+fi
+
+exec >> $log_file 2>&1
+
 if [ -f "$pid_file" ]; then
-    echo "`date` Turning off pervious lighting"
-    sudo kill -s SIGINT `cat $pid_file` || true
-    sudo rm $pid_file
+    bash /home/pi/menorah_lamp/extinguish_menorah.sh
 fi
 
 echo "`date` Lighting the menorah"
