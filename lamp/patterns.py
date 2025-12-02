@@ -57,8 +57,8 @@ fan_out = Pattern(
     "Fan out",
     pf.fan_out,
     defaults = {
-        "fade": 0.25,
-        "delay": 0.25,
+        "fade": [v / 100 for v in range(0, 30, 5)],
+        "delay": [v / 100 for v in range(10, 30, 5)],
         "keep_on": [True, False]
     }
 )

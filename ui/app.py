@@ -57,6 +57,10 @@ def set_state():
     params = d["params"]
     if params != "":
       for param in params.splitlines(keepends=False):
+        # TODO: Tidy this up with the goal of being able to
+        # 1) copy and paste from the output
+        # 2) flexibility
+        param = param.strip().replace("'", "").replace(":", " ").replace("  ", " ")
         if ' ' not in param:
           continue
         param = param.strip()
