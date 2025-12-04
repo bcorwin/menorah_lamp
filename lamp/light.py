@@ -76,6 +76,7 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
 
         date_to_run = date_to_run.date()
         menorah.print({"Date": str(date_to_run)})
+        menorah.print({"Run time": run_time})
 
         night = hd.chanukah_nights.get(date_to_run)
         if night is not None:
