@@ -9,6 +9,7 @@ all_palettes = list(all_palettes.values())
 two_color_palettes = [p for p in all_palettes if p.get_size() == 2]
 non_white_palettes = [p for p in all_palettes if WHITE not in p.get_all()]
 
+
 class PatternTemplate(patterns.Pattern):
     def __init__(self, name, pattern, palettes=all_palettes, params={}):
         if params.keys() != pattern.get_defaults(keys_only=True):
@@ -30,26 +31,26 @@ class PatternTemplate(patterns.Pattern):
 
 # Chaos: cycle, min_num = max_num = len(lights), reset = false, palette = rainbow? or other high count
 # Sparkle: cycle, min_num = max_num = len(lights), reset = false, palette = low color count
-# Alternate: something with even / odd 
+# Alternate: something with even / odd
 
 blink = PatternTemplate(
-    name = "Blink",
-    pattern = patterns.cycle,
-    palettes = two_color_palettes,
-    params = {
+    name="Blink",
+    pattern=patterns.cycle,
+    palettes=two_color_palettes,
+    params={
         "fade": 0,
-        "delay": [x / 10 for x in range(2,6)],
+        "delay": [x / 10 for x in range(2, 6)],
         "min_num": 0,
         "max_num": 0,
         "random_next": False,
         "reset": False,
-    }
+    },
 )
 
 breath = PatternTemplate(
-    name = "Breath",
-    pattern = patterns.cycle,
-    params = {
+    name="Breath",
+    pattern=patterns.cycle,
+    params={
         "fade": range(5, 11),
         "delay": 1.0,
         "min_num": 0,
@@ -57,30 +58,30 @@ breath = PatternTemplate(
         "reset": False,
         "random_next": False,
         "reset": False,
-    }
+    },
 )
 
 sunrise = PatternTemplate(
-    name = "Sunrise",
-    pattern = patterns.color_chase,
-    params = {
+    name="Sunrise",
+    pattern=patterns.color_chase,
+    params={
         "fade": 10,
         "delay": 10,
         "alternate": True,
-    }
+    },
 )
 
 white_snake = PatternTemplate(
-    name = "White snake",
-    pattern = patterns.snake,
-    palettes = non_white_palettes,
-    params = {
+    name="White snake",
+    pattern=patterns.snake,
+    palettes=non_white_palettes,
+    params={
         "delay": 0.25,
         "fade": 0.01,
         "growing": False,
         "snake_size": 1,
         "white": True,
-    }
+    },
 )
 
 current_module = sys.modules[__name__]

@@ -8,8 +8,10 @@
 import time
 import random
 
+
 def to_bool(params, key):
     return params[key].lower()[0] == "t"
+
 
 def fan_out(lamp, lights, palette, **kwargs):
     delay = float(kwargs["delay"])
@@ -21,13 +23,14 @@ def fan_out(lamp, lights, palette, **kwargs):
 
     for i in range(5):
         color = colors[i % len(colors)]
-        lights = [4+i, 4-i]
+        lights = [4 + i, 4 - i]
         lamp._lights_on(lights, [color], fade=fade)
         time.sleep(delay)
         if not keep_on:
             lamp._lights_off(lights, fade=fade)
     if keep_on:
         lamp.off(fade=fade)
+
 
 def cycle(lamp, lights, palette, **kwargs):
     min_num = int(kwargs["min_num"])
@@ -64,6 +67,7 @@ def cycle(lamp, lights, palette, **kwargs):
     lamp._lights_on(new_lights, new_colors, fade=fade)
     time.sleep(delay)
 
+
 def color_chase(lamp, lights, palette, **kwargs):
     delay = float(kwargs["delay"])
     fade = float(kwargs["fade"])
@@ -76,8 +80,11 @@ def color_chase(lamp, lights, palette, **kwargs):
     for idx, light in enumerate(lights):
         lamp._lights_on([light], [color], fade=fade)
         time.sleep(delay)
-        if alternate and ((idx < num_lights - 1) or palette_size_divides_lights):
+        if alternate and (
+            (idx < num_lights - 1) or palette_size_divides_lights
+        ):
             color = palette.get_next()
+
 
 def snake(lamp, lights, palette, **kwargs):
     # TODO: Add flag to loop around (or bounce) instead of stopping at end then restarting
@@ -110,11 +117,11 @@ def snake(lamp, lights, palette, **kwargs):
                     time.sleep(delay)
 
             # Remove the tail and move the head forward
-            if snake_head < num_lights - 1:             
+            if snake_head < num_lights - 1:
                 lamp._lights_on(
                     [lights[snake_tail], lights[snake_head + 1]],
                     [off_color, color],
-                    fade = fade
+                    fade=fade,
                 )
                 time.sleep(delay)
             elif snake_head == (num_lights - 1):

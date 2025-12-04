@@ -4,6 +4,7 @@ from random import choice
 
 import pattern_functions as pf
 
+
 class Pattern:
     def __init__(self, name, func, defaults={}):
         self.name = name
@@ -56,40 +57,40 @@ class Pattern:
 fan_out = Pattern(
     "Fan out",
     pf.fan_out,
-    defaults = {
+    defaults={
         "fade": [v / 100 for v in range(0, 30, 5)],
         "delay": [v / 100 for v in range(10, 30, 5)],
-        "keep_on": [True, False]
-    }
+        "keep_on": [True, False],
+    },
 )
 
 cycle = Pattern(
     "Cycle",
     pf.cycle,
-    defaults = {
+    defaults={
         "fade": 1.0,
         "delay": 1.0,
         "min_num": 1,
         "max_num": -1,
         "random_next": [False, True],
         "reset": True,
-    }
+    },
 )
 
 color_chase = Pattern(
     "Color chase",
     pf.color_chase,
-    defaults = {
+    defaults={
         "fade": 1.0,
         "delay": 0.25,
         "alternate": [False, True],
-    }
+    },
 )
 
 snake = Pattern(
     "Snake",
     pf.snake,
-    defaults = {
+    defaults={
         "delay": 0.25,
         "fade": 0.01,
         "growing": [False, True],

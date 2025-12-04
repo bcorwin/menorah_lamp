@@ -13,13 +13,16 @@ from menorah import Menorah
 from palettes import all_palettes
 from patterns import all_patterns
 
-signals = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP} 
+signals = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP}
 
-def handle_error(x,y):
+
+def handle_error(x, y):
     sys.exit(0)
+
 
 for sig in signals:
     signal.signal(sig, handle_error)
+
 
 @click.command()
 @click.option(
@@ -28,8 +31,8 @@ for sig in signals:
     "palette_key",
     default=None,
     type=click.Choice(sorted(all_palettes.keys()), case_sensitive=False),
-    metavar='PALETTE',
-    help="Palette (color-set) name."
+    metavar="PALETTE",
+    help="Palette (color-set) name.",
 )
 @click.option(
     "--pattern",
@@ -37,8 +40,8 @@ for sig in signals:
     "pattern_key",
     default=None,
     type=click.Choice(sorted(all_patterns.keys()), case_sensitive=False),
-    metavar='PATTERN',
-    help="Pattern name."
+    metavar="PATTERN",
+    help="Pattern name.",
 )
 @click.option(
     "--template",
@@ -46,28 +49,28 @@ for sig in signals:
     "template_key",
     default=None,
     type=click.Choice(sorted(all_templates.keys()), case_sensitive=False),
-    metavar='TEMPLATE',
-    help="Template name, overrides pattern and data selections."
+    metavar="TEMPLATE",
+    help="Template name, overrides pattern and data selections.",
 )
 @click.option(
     "--data",
     "-d",
     help="Parameters (data) to pass to the pattern.",
     type=(str, str),
-    multiple=True
+    multiple=True,
 )
 @click.option(
     "--date",
     "date_to_run",
     default=str(date.today()),
     type=click.DateTime(formats=["%Y-%m-%d"]),
-    help="Date to run as."
+    help="Date to run as.",
 )
 @click.option(
     "--run-time",
     default=4.5,
     type=click.FLOAT,
-    help="How long to run for (in hours)."
+    help="How long to run for (in hours).",
 )
 def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
     stop_time = time.time() + 60 * 60 * run_time
@@ -91,8 +94,7 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
             pattern = all_templates[template_key.lower()]
         elif pattern_key is None:
             pattern_key, pattern = choice(
-                list(all_patterns.items()) +
-                list(all_templates.items())
+                list(all_patterns.items()) + list(all_templates.items())
             )
         else:
             pattern = all_patterns[pattern_key.lower()]
@@ -102,9 +104,9 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
             palette = all_palettes[palette_key.lower()]
         else:
             if date_to_run in hd.christmas_dates:
-                palette = all_palettes['christmas']
+                palette = all_palettes["christmas"]
             elif date_to_run in hd.shabbat_dates:
-                palette = all_palettes['israel']
+                palette = all_palettes["israel"]
             elif isinstance(pattern, PatternTemplate):
                 palette = pattern.get_palette()
             else:
@@ -123,5 +125,6 @@ def light(palette_key, pattern_key, template_key, data, date_to_run, run_time):
         menorah.off()
         menorah.print("\n\nPutting out the Menorah.\033[?25h", log=False)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     light()
