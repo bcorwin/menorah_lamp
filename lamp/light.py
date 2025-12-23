@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# TODO: reformat
 import sys
 import time
 import click

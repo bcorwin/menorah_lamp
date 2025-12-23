@@ -52,7 +52,7 @@ rainbow = Colors(
 
 ukraine = Colors(name="Ukraine", colors=[(0, 87, 183), (255, 215, 0)])
 
-israel = Colors(name="Israel", colors=[(0, 56, 184), WHITE])
+shabbat = Colors(name="Shabbat", colors=[(0, 56, 184), WHITE])
 
 christmas = Colors(name="Christmas", colors=[(0, 150, 2), (229, 0, 0)])
 
