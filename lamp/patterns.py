@@ -38,6 +38,10 @@ class Pattern:
         self.palette = palette
 
         params = {}
+        kwargs = {
+            key.lower(): value.lower()
+            for key, value in kwargs.items()
+        }
         for key, default in self.defaults.items():
             default_val = self._select_param(default)
             params[key.lower()] = str(kwargs.get(key, default_val)).lower()
